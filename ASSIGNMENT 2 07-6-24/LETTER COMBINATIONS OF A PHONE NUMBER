@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char* digitsToLetters[] = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+
+char** letterCombinations(char* digits, int* returnSize) {
+    if (strlen(digits) == 0) return NULL;
+    
+    char** result = (char**)malloc(sizeof(char*) * 5000);
+    *returnSize = 0;
+    
+    char* current = (char*)malloc(sizeof(char) * 5000);
+    current[0] = '\0';
+    
+    for (int i = 0; i < strlen(digits); i++) {
+        char* letters = digitsToLetters[digits[i] - '0'];
+        int len = strlen(letters);
+        
+        for (int j = 0; j < len; j++) {
+            current[strlen(current)] = letters[j];
+            current[strlen(current) + 1] = '\0';
+            
+            if (i == strlen(digits) - 1) {
+                result[*returnSize] = (char*)malloc(sizeof(char) * (strlen(current) + 1));
+                strcpy(result[*returnSize], current);
+                (*returnSize)++;
+            } else {
+                char* temp = current;
+                current = (char*)malloc(sizeof(char) * (strlen(current) + 1));
+                strcpy(current, temp);
+                free(temp);
+            }
+        }
+        
+        free(current);
+        current = (char*)malloc(sizeof(char) * 5000);
+        current[0] = '\0';
+    }
+    
+    return result;
+}
+
+int main() {
+    char* digits = "23";
+    int returnSize;
+    char** result = letterCombinations(digits, &returnSize);
+    
+    for (int i = 0; i < returnSize; i++) {
+        printf("%s\n", result[i]);
+    }
+    
+    return 0;
+}
+
