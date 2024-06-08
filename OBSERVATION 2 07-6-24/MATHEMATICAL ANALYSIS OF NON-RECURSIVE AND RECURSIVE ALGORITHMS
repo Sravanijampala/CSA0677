@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+// Non-recursive algorithm
+int nonRecursiveFactorial(int n) {
+    int result = 1;
+    for (int i = 1; i <= n; i++) {
+        result *= i;
+    }
+    return result;
+}
+
+// Recursive algorithm
+int recursiveFactorial(int n) {
+    if (n == 0) {
+        return 1;
+    } else {
+        return n * recursiveFactorial(n - 1);
+    }
+}
+
+int main() {
+    int num = 5;
+    
+    // Non-recursive factorial calculation
+    int nonRecursiveResult = nonRecursiveFactorial(num);
+    printf("Non-recursive factorial of %d is: %d\n", num, nonRecursiveResult);
+    
+    // Recursive factorial calculation
+    int recursiveResult = recursiveFactorial(num);
+    printf("Recursive factorial of %d is: %d\n", num, recursiveResult);
+    
+    return 0;
+}
