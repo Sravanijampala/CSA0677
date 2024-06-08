@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int cmpfunc (const void * a, const void * b) {
+   return ( *(int*)a - *(int*)b );
+}
+
+int** fourSum(int* nums, int numsSize, int target, int* returnSize, int** returnColumnSizes) {
+    if (numsSize < 4) return NULL;
+    
+    qsort(nums, numsSize, sizeof(int), cmpfunc);
+    
+    int** result = (int**)malloc(sizeof(int*) * 5000);
+    *returnColumnSizes = (int*)malloc(sizeof(int) * 5000);
+    *returnSize = 0;
+    
+    for (int i = 0; i < numsSize - 3; i++) {
+        if (i > 0 && nums[i] == nums[i-1]) continue;
+        
+        for (int j = i + 1; j < numsSize - 2; j++) {
+            if (j > i + 1 && nums[j] == nums[j-1]) continue;
+            
+            int left = j + 1, right = numsSize - 1;
+            
+            while (left < right) {
+                int sum = nums[i] + nums[j] + nums[left] + nums[right];
+                if (sum == target) {
+                    result[*returnSize] = (int*)malloc(sizeof(int) * 4);
+                    result[*returnSize][0] = nums[i];
+                    result[*returnSize][1] = nums[j];
+                    result[*returnSize][2] = nums[left];
+                    result[*returnSize][3] = nums[right];
+                    (*returnColumnSizes)[*returnSize] = 4;
+                    (*returnSize)++;
+                    
+                    while (left < right && nums[left] == nums[left+1]) left++;
+                    while (left < right && nums[right] == nums[right-1]) right--;
+                    left++;
+                    right--;
+                } else if (sum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    int nums[] = {1,0,-1,0,-2,2};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int target = 0;
+    int returnSize;
+    int* returnColumnSizes;
+    int** result = fourSum(nums, numsSize, target, &returnSize, &returnColumnSizes);
+    
+    for (int i = 0; i < returnSize; i++) {
+        printf("[%d, %d, %d, %d]\n", result[i][0], result[i][1], result[i][2], result[i][3]);
+    }
+    
+    return 0;
+}
