@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int val;
+    struct Node* next;
+} Node;
+
+Node* removeNthFromEnd(Node* head, int n) {
+    Node* dummy = (Node*)malloc(sizeof(Node));
+    dummy->next = head;
+    Node* first = dummy;
+    Node* second = dummy;
+
+    // Advance first pointer so that the gap between first and second is n nodes apart
+    for (int i = 0; i <= n; i++) {
+        first = first->next;
+    }
+
+    // Move first to the end, maintaining the gap
+    while (first != NULL) {
+        first = first->next;
+        second = second->next;
+    }
+
+    // Remove the nth node from the end
+    second->next = second->next->next;
+    free(first);
+
+    return dummy->next;
+}
+
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->val);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    Node* head = (Node*)malloc(sizeof(Node));
+    head->val = 1;
+    head->next = (Node*)malloc(sizeof(Node));
+    head->next->val = 2;
+    head->next->next = (Node*)malloc(sizeof(Node));
+    head->next->next->val = 3;
+    head->next->next->next = (Node*)malloc(sizeof(Node));
+    head->next->next->next->val = 4;
+    head->next->next->next->next = (Node*)malloc(sizeof(Node));
+    head->next->next->next->next->val = 5;
+
+    printf("Original List: ");
+    printList(head);
+
+    head = removeNthFromEnd(head, 2);
+
+    printf("List after removing the nth node from the end: ");
+    printList(head);
+
+    return 0;
+}
+
