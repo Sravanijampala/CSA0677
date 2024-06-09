@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char s[] = "a?b?c?";
+    int count[26] = {0};
+    
+    for (int i = 0; i < strlen(s); i++) {
+        if (s[i] != '?') {
+            count[s[i] - 'a']++;
+        }
+    }
+    
+    int minCost = 0;
+    for (int i = 0; i < 26; i++) {
+        minCost += count[i] * (count[i] - 1) / 2;
+    }
+    
+    printf("Minimum value of s: %d\n", minCost);
+    
+    return 0;
+}
