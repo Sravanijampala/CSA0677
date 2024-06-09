@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MOD 1000000007
+
+// Function to calculate the maximum sum of a subsequence with no two adjacent elements selected
+long long maxNonAdjacentSum(int* nums, int numsSize) {
+    if (numsSize == 0) return 0;
+    if (numsSize == 1) return nums[0];
+
+    long long prev1 = nums[0];
+    long long prev2 = 0;
+
+    for (int i = 1; i < numsSize; i++) {
+        long long current = (nums[i] + prev2) > prev1 ? (nums[i] + prev2) : prev1;
+        prev2 = prev1;
+        prev1 = current;
+    }
+
+    return prev1;
+}
+
+int main() {
+    // Example input
+    int nums[] = {1, 2, 3, 4};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int queries[][2] = {{0, 5}, {3, 1}};
+    int queriesSize = sizeof(queries) / sizeof(queries[0]);
+
+    long long totalSum = 0;
+
+    for (int i = 0; i < queriesSize; i++) {
+        int pos = queries[i][0];
+        int xi = queries[i][1];
+        
+        // Update the nums array
+        nums[pos] = xi;
+        
+        // Calculate the maximum sum of a subsequence with no two adjacent elements
+        long long answer = maxNonAdjacentSum(nums, numsSize);
+        
+        // Add to the total sum
+        totalSum = (totalSum + answer) % MOD;
+    }
+
+    // Print the result
+    printf("The sum of the answers to all queries is: %lld\n", totalSum);
+
+    return 0;
+}
