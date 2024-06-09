@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+char *lastRemaining(char *s) {
+    int count[26] = {0};
+    int len = strlen(s);
+
+    for (int i = 0; i < len; i++) {
+        count[s[i] - 'a']++;
+    }
+
+    char *result = (char *)malloc(len + 1);
+    int index = 0;
+
+    for (int i = 0; i < len; i++) {
+        if (count[s[i] - 'a'] == 1) {
+            result[index++] = s[i];
+        }
+        count[s[i] - 'a'] = 0;
+    }
+
+    result[index] = '\0';
+    return result;
+}
+
+int main() {
+    char s[] = "aabcbbca";
+    char *result = lastRemaining(s);
+    printf("%s\n", result);
+    free(result);
+    return 0;
+}
