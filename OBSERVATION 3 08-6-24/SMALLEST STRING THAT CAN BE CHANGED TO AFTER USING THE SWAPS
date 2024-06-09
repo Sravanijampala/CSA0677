@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Disjoint Set Union (DSU) data structure
+typedef struct {
+    int *parent;
+} DSU;
+
+// Initialize DSU with size n
+DSU* dsu_init(int n) {
+    DSU* dsu = (DSU*)malloc(sizeof(DSU));
+    dsu->parent = (int*)malloc(n * sizeof(int));
+    for (int i = 0; i < n; ++i)
+        dsu->parent[i] = i;
+    return dsu;
+}
+
+// Find operation for DSU
+int dsu_find(DSU* dsu, int x) {
+    if (dsu->parent[x] != x)
+        dsu->parent[x] = dsu_find(dsu, dsu->parent[x]);
+    return dsu->parent[x];
+}
+
+// Union operation for DSU
+void dsu_union(DSU* dsu, int x, int y) {
+    dsu->parent[dsu_find(dsu, x)] = dsu_find(dsu, y);
+}
+
+// Function to sort characters in a string
+void sortString(char* str, int* pairs, int pairsSize) {
+    int n = strlen(str);
+    DSU* dsu = dsu_init(n);
+    
+    // Merge the indices in each pair
+    for (int i = 0; i < pairsSize; ++i) {
+        dsu_union(dsu, pairs[i*2], pairs[i*2+1]);
+    }
+    
+    // Create an array to store characters of each disjoint set
+    char* sets[n];
+    for (int i = 0; i < n; ++i)
+        sets[i] = (char*)malloc(n * sizeof(char));
+    
+    // Group characters by their disjoint sets
+    for (int i = 0; i < n; ++i) {
+        int parent = dsu_find(dsu, i);
+        sets[parent][i] = str[i];
+    }
+    
+    // Sort characters in each disjoint set
+    for (int i = 0; i < n; ++i) {
+        if (dsu->parent[i] == i) {
+            qsort(sets[i], n, sizeof(char), strcmp);
+        }
+    }
+    
+    // Reconstruct the string from sorted disjoint sets
+    for (int i = 0; i < n; ++i) {
+        int parent = dsu_find(dsu, i);
+        str[i] = sets[parent][i];
+    }
+    
+    // Free memory
+    for (int i = 0; i < n; ++i)
+        free(sets[i]);
+    free(dsu->parent);
+    free(dsu);
+}
+
+// Example usage
+int main() {
+    char str[] = "dcab";
+    int pairs[][2] = {{0, 3}, {1, 2}};
+    int pairsSize = sizeof(pairs) / sizeof(pairs[0]);
+    
+    sortString(str, (int*)pairs, pairsSize);
+    
+    printf("Lexicographically smallest string: %s\n", str);
+    
+    return 0;
+}
