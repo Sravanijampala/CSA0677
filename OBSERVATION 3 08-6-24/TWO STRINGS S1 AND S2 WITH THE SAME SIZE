@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+bool canPermuteBreaks(char *s1, char *s2) {
+    int count1[26] = {0}; // Count of characters in s1
+    int count2[26] = {0}; // Count of characters in s2
+    
+    int n = strlen(s1);
+    
+    // Count occurrences of characters in s1 and s2
+    for (int i = 0; i < n; ++i) {
+        count1[s1[i] - 'a']++;
+        count2[s2[i] - 'a']++;
+    }
+    
+    int prefixSum1 = 0, prefixSum2 = 0;
+    
+    // Iterate through characters in alphabetical order
+    for (int i = 0; i < 26; ++i) {
+        // Update prefix sums
+        prefixSum1 += count1[i];
+        prefixSum2 += count2[i];
+        
+        // Check if s1 can break s2
+        if (prefixSum1 > prefixSum2) {
+            bool canBreakS2 = true;
+            for (int j = i + 1; j < 26; ++j) {
+                if (count1[j] < count2[j]) {
+                    canBreakS2 = false;
+                    break;
+                }
+            }
+            if (canBreakS2) return true;
+        }
+        
+        // Check if s2 can break s1
+        if (prefixSum2 > prefixSum1) {
+            bool canBreakS1 = true;
+            for (int j = i + 1; j < 26; ++j) {
+                if (count2[j] < count1[j]) {
+                    canBreakS1 = false;
+                    break;
+                }
+            }
+            if (canBreakS1) return true;
+        }
+    }
+    
+    return false;
+}
+
+// Example usage
+int main() {
+    char s1[] = "abc";
+    char s2[] = "xya";
+    
+    if (canPermuteBreaks(s1, s2)) {
+        printf("Yes, s1 can break s2 or vice-versa.\n");
+    } else {
+        printf("No, s1 cannot break s2 and s2 cannot break s1.\n");
+    }
+    
+    return 0;
+}
