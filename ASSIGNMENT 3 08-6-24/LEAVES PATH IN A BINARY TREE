@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+// Definition for a binary tree node.
+struct TreeNode {
+    int val;
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+
+// Helper function to create a new tree node
+struct TreeNode* createNode(int val) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    newNode->val = val;
+    newNode->left = newNode->right = NULL;
+    return newNode;
+}
+
+// Function to check if the sequence is valid from root to leaf
+bool isValidSequence(struct TreeNode* root, int* arr, int arrSize, int index) {
+    if (root == NULL || index >= arrSize || root->val != arr[index]) {
+        return false;
+    }
+    
+    if (root->left == NULL && root->right == NULL && index == arrSize - 1) {
+        return true;
+    }
+    
+    return isValidSequence(root->left, arr, arrSize, index + 1) || isValidSequence(root->right, arr, arrSize, index + 1);
+}
+
+// Main function to check if the given sequence is a valid sequence from root to leaf
+bool isValidSequenceMain(struct TreeNode* root, int* arr, int arrSize) {
+    return isValidSequence(root, arr, arrSize, 0);
+}
+
+// Helper function to free the tree nodes
+void freeTree(struct TreeNode* root) {
+    if (root == NULL) {
+        return;
+    }
+    freeTree(root->left);
+    freeTree(root->right);
+    free(root);
+}
+
+int main() {
+    // Example 1
+    struct TreeNode* root1 = createNode(0);
+    root1->left = createNode(1);
+    root1->right = createNode(0);
+    root1->left->left = createNode(0);
+    root1->left->right = createNode(1);
+    root1->right->left = createNode(0);
+    root1->left->left->right = createNode(1);
+    root1->left->right->left = createNode(0);
+    root1->left->right->right = createNode(0);
+    int arr1[] = {0, 1, 0, 1};
+    int arrSize1 = sizeof(arr1) / sizeof(arr1[0]);
+    printf("Example 1: %s\n", isValidSequenceMain(root1, arr1, arrSize1) ? "true" : "false");
+    freeTree(root1);
+
+    // Example 2
+    struct TreeNode* root2 = createNode(0);
+    root2->left = createNode(1);
+    root2->right = createNode(0);
+    root2->left->left = createNode(0);
+    root2->left->right = createNode(1);
+    root2->right->left = createNode(0);
+    root2->left->left->right = createNode(1);
+    root2->left->right->left = createNode(0);
+    root2->left->right->right = createNode(0);
+    int arr2[] = {0, 0, 1};
+    int arrSize2 = sizeof(arr2) / sizeof(arr2[0]);
+    printf("Example 2: %s\n", isValidSequenceMain(root2, arr2, arrSize2) ? "true" : "false");
+    freeTree(root2);
+
+    // Example 3
+    struct TreeNode* root3 = createNode(0);
+    root3->left = createNode(1);
+    root3->right = createNode(0);
+    root3->left->left = createNode(0);
+    root3->left->right = createNode(1);
+    root3->right->left = createNode(0);
+    root3->left->left->right = createNode(1);
+    root3->left->right->left = createNode(0);
+    root3->left->right->right = createNode(0);
+    int arr3[] = {0, 1, 1};
+    int arrSize3 = sizeof(arr3) / sizeof(arr3[0]);
+    printf("Example 3: %s\n", isValidSequenceMain(root3, arr3, arrSize3) ? "true" : "false");
+    freeTree(root3);
+
+    return 0;
+}
