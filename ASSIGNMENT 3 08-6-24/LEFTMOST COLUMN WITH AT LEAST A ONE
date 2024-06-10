@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ROWS 2
+#define COLS 2
+
+// Define the BinaryMatrix interface with get and dimensions functions
+typedef struct {
+    int (*get)(int row, int col);
+    int* (*dimensions)();
+} BinaryMatrix;
+
+// Sample matrix for demonstration purposes
+int mat[ROWS][COLS] = {{0, 0}, {1, 1}};
+
+// Function to get the element of the matrix at index (row, col)
+int get(int row, int col) {
+    return mat[row][col];
+}
+
+// Function to get the dimensions of the matrix
+int* dimensions() {
+    int *dims = (int *)malloc(2 * sizeof(int));
+    dims[0] = ROWS;
+    dims[1] = COLS;
+    return dims;
+}
+
+// Function to find the leftmost column with at least a one
+int leftMostColumnWithOne(BinaryMatrix *binaryMatrix) {
+    int *dims = binaryMatrix->dimensions();
+    int rows = dims[0];
+    int cols = dims[1];
+    free(dims);
+
+    int leftmost = -1;
+    int row = 0;
+    int col = cols - 1;
+
+    while (row < rows && col >= 0) {
+        if (binaryMatrix->get(row, col) == 1) {
+            leftmost = col;
+            col--;
+        } else {
+            row++;
+        }
+    }
+
+    return leftmost;
+}
+
+int main() {
+    // Create the BinaryMatrix interface
+    BinaryMatrix binaryMatrix;
+    binaryMatrix.get = get;
+    binaryMatrix.dimensions = dimensions;
+
+    // Example usage
+    int result = leftMostColumnWithOne(&binaryMatrix);
+    printf("Leftmost column with at least a one: %d\n", result);  // Expected output: 0
+
+    return 0;
+}
