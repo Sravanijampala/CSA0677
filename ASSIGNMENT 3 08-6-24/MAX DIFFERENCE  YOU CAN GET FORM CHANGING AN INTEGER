@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int maxDifference(int num) {
+    // Convert the integer to a string to manipulate its digits
+    char str[11];
+    sprintf(str, "%d", num);
+    int len = strlen(str);
+    
+    // Calculate the maximum possible value (a)
+    char maxStr[11];
+    strcpy(maxStr, str);
+    for (int i = 0; i < len; i++) {
+        if (maxStr[i] != '9') {
+            char target = maxStr[i];
+            for (int j = 0; j < len; j++) {
+                if (maxStr[j] == target) {
+                    maxStr[j] = '9';
+                }
+            }
+            break;
+        }
+    }
+    int maxVal = atoi(maxStr);
+    
+    // Calculate the minimum possible value (b)
+    char minStr[11];
+    strcpy(minStr, str);
+    if (minStr[0] != '1') {
+        char target = minStr[0];
+        for (int i = 0; i < len; i++) {
+            if (minStr[i] == target) {
+                minStr[i] = '1';
+            }
+        }
+    } else {
+        for (int i = 1; i < len; i++) {
+            if (minStr[i] != '0' && minStr[i] != '1') {
+                char target = minStr[i];
+                for (int j = 0; j < len; j++) {
+                    if (minStr[j] == target) {
+                        minStr[j] = '0';
+                    }
+                }
+                break;
+            }
+        }
+    }
+    int minVal = atoi(minStr);
+    
+    // Calculate the maximum difference
+    return maxVal - minVal;
+}
+
+int main() {
+    // Example 1
+    int num1 = 555;
+    printf("Input: %d\n", num1);
+    printf("Output: %d\n", maxDifference(num1));
+
+    // Example 2
+    int num2 = 9;
+    printf("Input: %d\n", num2);
+    printf("Output: %d\n", maxDifference(num2));
+
+    // Additional example
+    int num3 = 123456;
+    printf("Input: %d\n", num3);
+    printf("Output: %d\n", maxDifference(num3));
+
+    return 0;
+}
