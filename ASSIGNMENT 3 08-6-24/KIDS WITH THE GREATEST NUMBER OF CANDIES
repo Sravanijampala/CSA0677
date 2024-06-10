@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+void kidsWithCandies(int* candies, int candiesSize, int extraCandies, bool* result) {
+    // Find the maximum number of candies any kid currently has
+    int maxCandies = 0;
+    for (int i = 0; i < candiesSize; i++) {
+        if (candies[i] > maxCandies) {
+            maxCandies = candies[i];
+        }
+    }
+    
+    // Determine if each kid will have the greatest number of candies after receiving extraCandies
+    for (int i = 0; i < candiesSize; i++) {
+        if (candies[i] + extraCandies >= maxCandies) {
+            result[i] = true;
+        } else {
+            result[i] = false;
+        }
+    }
+}
+
+int main() {
+    // Example 1
+    int candies1[] = {2, 3, 5, 1, 3};
+    int candiesSize1 = sizeof(candies1) / sizeof(candies1[0]);
+    int extraCandies1 = 3;
+    bool result1[candiesSize1];
+    
+    kidsWithCandies(candies1, candiesSize1, extraCandies1, result1);
+    
+    printf("Example 1: [");
+    for (int i = 0; i < candiesSize1; i++) {
+        printf(result1[i] ? "true" : "false");
+        if (i < candiesSize1 - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    
+    // Example 2
+    int candies2[] = {4, 2, 1, 1, 2};
+    int candiesSize2 = sizeof(candies2) / sizeof(candies2[0]);
+    int extraCandies2 = 1;
+    bool result2[candiesSize2];
+    
+    kidsWithCandies(candies2, candiesSize2, extraCandies2, result2);
+    
+    printf("Example 2: [");
+    for (int i = 0; i < candiesSize2; i++) {
+        printf(result2[i] ? "true" : "false");
+        if (i < candiesSize2 - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    
+    // Example 3
+    int candies3[] = {12, 1, 12};
+    int candiesSize3 = sizeof(candies3) / sizeof(candies3[0]);
+    int extraCandies3 = 10;
+    bool result3[candiesSize3];
+    
+    kidsWithCandies(candies3, candiesSize3, extraCandies3, result3);
+    
+    printf("Example 3: [");
+    for (int i = 0; i < candiesSize3; i++) {
+        printf(result3[i] ? "true" : "false");
+        if (i < candiesSize3 - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    
+    return 0;
+}
