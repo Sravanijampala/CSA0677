@@ -1,0 +1,90 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+typedef struct Node {
+    int val;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* head;
+    Node* tail;
+    int* count;
+    int max_size;
+} FirstUnique;
+
+// Helper function to create a new node
+Node* createNode(int val) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    newNode->val = val;
+    newNode->next = NULL;
+    return newNode;
+}
+
+// Function to initialize the FirstUnique structure
+FirstUnique* firstUniqueCreate(int* nums, int numsSize) {
+    FirstUnique* obj = (FirstUnique*)malloc(sizeof(FirstUnique));
+    obj->head = NULL;
+    obj->tail = NULL;
+    obj->max_size = 100000; // Since 1 <= nums[i] <= 10^8
+    obj->count = (int*)calloc(obj->max_size, sizeof(int));
+
+    for (int i = 0; i < numsSize; ++i) {
+        firstUniqueAdd(obj, nums[i]);
+    }
+
+    return obj;
+}
+
+// Function to show the first unique number
+int firstUniqueShowFirstUnique(FirstUnique* obj) {
+    while (obj->head && obj->count[obj->head->val] > 1) {
+        Node* temp = obj->head;
+        obj->head = obj->head->next;
+        free(temp);
+    }
+    return obj->head ? obj->head->val : -1;
+}
+
+// Function to add a value to the FirstUnique structure
+void firstUniqueAdd(FirstUnique* obj, int value) {
+    obj->count[value]++;
+    if (obj->count[value] == 1) {
+        Node* newNode = createNode(value);
+        if (!obj->tail) {
+            obj->head = obj->tail = newNode;
+        } else {
+            obj->tail->next = newNode;
+            obj->tail = newNode;
+        }
+    }
+}
+
+// Function to free the FirstUnique structure
+void firstUniqueFree(FirstUnique* obj) {
+    Node* current = obj->head;
+    while (current) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    free(obj->count);
+    free(obj);
+}
+
+// Main function to test the implementation
+int main() {
+    int nums1[] = {2, 3, 5};
+    FirstUnique* firstUnique = firstUniqueCreate(nums1, 3);
+    printf("%d\n", firstUniqueShowFirstUnique(firstUnique)); // return 2
+    firstUniqueAdd(firstUnique, 5); // the queue is now [2, 3, 5, 5]
+    printf("%d\n", firstUniqueShowFirstUnique(firstUnique)); // return 2
+    firstUniqueAdd(firstUnique, 2); // the queue is now [2, 3, 5, 5, 2]
+    printf("%d\n", firstUniqueShowFirstUnique(firstUnique)); // return 3
+    firstUniqueAdd(firstUnique, 3); // the queue is now [2, 3, 5, 5, 2, 3]
+    printf("%d\n", firstUniqueShowFirstUnique(firstUnique)); // return -1
+    firstUniqueFree(firstUnique);
+
+    return 0;
+}
