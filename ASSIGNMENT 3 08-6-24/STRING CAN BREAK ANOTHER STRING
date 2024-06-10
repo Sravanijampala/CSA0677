@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Helper function to compare two characters for qsort
+int compareChars(const void *a, const void *b) {
+    return (*(char *)a - *(char *)b);
+}
+
+// Function to check if s1 can break s2
+int canBreak(char *s1, char *s2, int n) {
+    // Sort both strings
+    qsort(s1, n, sizeof(char), compareChars);
+    qsort(s2, n, sizeof(char), compareChars);
+    
+    // Check if s1 can break s2
+    int s1_breaks_s2 = 1;
+    int s2_breaks_s1 = 1;
+    for (int i = 0; i < n; i++) {
+        if (s1[i] < s2[i]) {
+            s1_breaks_s2 = 0;
+        }
+        if (s2[i] < s1[i]) {
+            s2_breaks_s1 = 0;
+        }
+    }
+    
+    // Return true if either s1 can break s2 or s2 can break s1
+    return s1_breaks_s2 || s2_breaks_s1;
+}
+
+int main() {
+    // Example 1
+    char s1_1[] = "abc";
+    char s2_1[] = "xya";
+    printf("Input: s1 = \"%s\", s2 = \"%s\"\n", s1_1, s2_1);
+    printf("Output: %s\n\n", canBreak(s1_1, s2_1, strlen(s1_1)) ? "true" : "false");
+    
+    // Example 2
+    char s1_2[] = "abe";
+    char s2_2[] = "acd";
+    printf("Input: s1 = \"%s\", s2 = \"%s\"\n", s1_2, s2_2);
+    printf("Output: %s\n\n", canBreak(s1_2, s2_2, strlen(s1_2)) ? "true" : "false");
+    
+    // Example 3
+    char s1_3[] = "leetcodee";
+    char s2_3[] = "interview";
+    printf("Input: s1 = \"%s\", s2 = \"%s\"\n", s1_3, s2_3);
+    printf("Output: %s\n\n", canBreak(s1_3, s2_3, strlen(s1_3)) ? "true" : "false");
+
+    return 0;
+}
