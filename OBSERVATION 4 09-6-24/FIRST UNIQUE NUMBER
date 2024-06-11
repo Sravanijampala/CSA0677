@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int value;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node* front;
+    Node* rear;
+    int* freq;
+    int size;
+} FirstUnique;
+
+FirstUnique* firstUniqueCreate(int* nums, int numsSize) {
+    FirstUnique* obj = (FirstUnique*)malloc(sizeof(FirstUnique));
+    obj->front = NULL;
+    obj->rear = NULL;
+    obj->freq = (int*)calloc(10001, sizeof(int));
+    obj->size = 0;
+
+    for (int i = 0; i < numsSize; i++) {
+        firstUniqueAdd(obj, nums[i]);
+    }
+
+    return obj;
+}
+
+int firstUniqueShowFirstUnique(FirstUnique* obj) {
+    if (obj->front == NULL) {
+        return -1;
+    }
+    return obj->front->value;
+}
+
+void firstUniqueAdd(FirstUnique* obj, int value) {
+    if (obj->freq[value] == 0) {
+        Node* newNode = (Node*)malloc(sizeof(Node));
+        newNode->value = value;
+        newNode->next = NULL;
+
+        if (obj->rear == NULL) {
+            obj->front = obj->rear = newNode;
+        } else {
+            obj->rear->next = newNode;
+            obj->rear = newNode;
+        }
+        obj->size++;
+    }
+    obj->freq[value]++;
+
+    while (obj->front != NULL && obj->freq[obj->front->value] > 1) {
+        Node* temp = obj->front;
+        obj->front = obj->front->next;
+        free(temp);
+        obj->size--;
+    }
+}
+
+void firstUniqueDelete(FirstUnique* obj) {
+    while (obj->front != NULL) {
+        Node* temp = obj->front;
+        obj->front = obj->front->next;
+        free(temp);
+    }
+    free(obj->freq);
+    free(obj);
+}
+
+int main() {
+    int nums[] = {2, 3, 5};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+
+    FirstUnique* obj = firstUniqueCreate(nums, numsSize);
+
+    printf("First unique: %d\n", firstUniqueShowFirstUnique(obj));
+
+    firstUniqueAdd(obj, 3);
+    firstUniqueAdd(obj, 7);
+    firstUniqueAdd(obj, 8);
+    firstUniqueAdd(obj, 7);
+
+    printf("First unique: %d\n", firstUniqueShowFirstUnique(obj));
+
+    firstUniqueDelete(obj);
+
+    return 0;
+}
