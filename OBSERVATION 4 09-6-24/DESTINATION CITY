@@ -1,0 +1,50 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_CITIES 100
+
+char* destCity(char*** paths, int pathsSize, int* pathsColSize) {
+    char* outgoingCities[MAX_CITIES] = {0}; // Initialize an array to store cities with outgoing paths
+    int outgoingCitiesCount = 0;
+
+    // Add the first city of each path to the outgoing cities array
+    for (int i = 0; i < pathsSize; i++) {
+        outgoingCities[outgoingCitiesCount++] = strdup(paths[i][0]);
+    }
+
+    // Find the destination city
+    for (int i = 0; i < pathsSize; i++) {
+        char* destination = paths[i][1];
+        int isDestination = 1;
+
+        // Check if the destination city is not in the outgoing cities array
+        for (int j = 0; j < outgoingCitiesCount; j++) {
+            if (strcmp(destination, outgoingCities[j]) == 0) {
+                isDestination = 0;
+                break;
+            }
+        }
+
+        // If the destination city is not in the outgoing cities array, return it
+        if (isDestination) {
+            return strdup(destination);
+        }
+    }
+
+    return NULL; // Destination city not found
+}
+
+int main() {
+    char* paths1[3][2] = {{"London", "New York"}, {"New York", "Lima"}, {"Lima", "Sao Paulo"}};
+    char* paths2[3][2] = {{"B", "C"}, {"D", "B"}, {"C", "A"}};
+
+    int pathsSize1 = 3, pathsSize2 = 3;
+    int pathsColSize1[] = {2, 2, 2};
+    int pathsColSize2[] = {2, 2, 2};
+
+    printf("Example 1 Output: %s\n", destCity(paths1, pathsSize1, pathsColSize1));
+    printf("Example 2 Output: %s\n", destCity(paths2, pathsSize2, pathsColSize2));
+
+    return 0;
+}
