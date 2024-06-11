@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MOD 1000000007
+
+int numberOfWays(int** hats, int hatsSize, int* hatsColSize) {
+    int n = hatsSize; // number of people
+    int m = 40; // number of hat types
+    int dp[(1 << n)][m + 1]; // dp[mask][i] stores the number of ways to assign hats to people in mask with last hat type i
+
+    for (int i = 0; i < (1 << n); i++) {
+        for (int j = 0; j <= m; j++) {
+            dp[i][j] = 0;
+        }
+    }
+
+    dp[0][0] = 1;
+
+    for (int i = 1; i <= m; i++) {
+        for (int mask = 0; mask < (1 << n); mask++) {
+            dp[mask][i] = dp[mask][i - 1];
+            for (int j = 0; j < n; j++) {
+                if ((mask & (1 << j)) && (hats[j][0] <= i || hats[j][hatsColSize[j] - 1] >= i)) {
+                    dp[mask][i] += dp[mask ^ (1 << j)][i - 1];
+                    dp[mask][i] %= MOD;
+                }
+            }
+        }
+    }
+
+    return dp[(1 << n) - 1][m];
+}
+
+int main() {
+    int hats1[3][2] = {{3, 4}, {4, 5}, {5}};
+    int* hats1ColSize = (int*)malloc(sizeof(int) * 3);
+    hats1ColSize[0] = 2;
+    hats1ColSize[1] = 2;
+    hats1ColSize[2] = 1;
+    printf("Output for Example 1: %d\n", numberOfWays((int**)hats1, 3, hats1ColSize));
+
+    int hats2[2][3] = {{3, 5, 1}, {3, 5}};
+    int* hats2ColSize = (int*)malloc(sizeof(int) * 2);
+    hats2ColSize[0] = 3;
+    hats2ColSize[1] = 2;
+    printf("Output for Example 2: %d\n", numberOfWays((int**)hats2, 2, hats2ColSize));
+
+    free(hats1ColSize);
+    free(hats2ColSize);
+    return 0;
+}
