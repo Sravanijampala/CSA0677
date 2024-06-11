@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to calculate the maximum difference between two integers
+int maximumDifference(int num) {
+    int max = 0;
+    int min = 9;
+
+    // Calculate the maximum and minimum digits in the number
+    while (num > 0) {
+        int digit = num % 10;
+        if (digit > max) {
+            max = digit;
+        }
+        if (digit < min) {
+            min = digit;
+        }
+        num /= 10;
+    }
+
+    // Calculate the maximum difference
+    return max - min;
+}
+
+int main() {
+    int num = 555;
+    int maxDiff = maximumDifference(num);
+    printf("Maximum difference: %d\n", maxDiff);
+
+    return 0;
+}
