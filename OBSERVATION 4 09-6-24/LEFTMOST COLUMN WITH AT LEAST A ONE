@@ -1,0 +1,85 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define the BinaryMatrix interface
+typedef struct {
+    int (*get)(int, int);
+    int (*dimensions)(void);
+} BinaryMatrix;
+
+// Function to get the value at a specified row and column
+int get(int row, int col, BinaryMatrix *binaryMatrix) {
+    return binaryMatrix->get(row, col);
+}
+
+// Function to get the dimensions of the binary matrix
+int dimensions(BinaryMatrix *binaryMatrix) {
+    return binaryMatrix->dimensions();
+}
+
+// Function to find the leftmost column with at least a one
+int leftMostColumnWithOne(BinaryMatrix *binaryMatrix) {
+    int rows = dimensions(binaryMatrix);
+    int cols = dimensions(binaryMatrix);
+    int result = -1;
+
+    for (int row = 0; row < rows; ++row) {
+        int left = 0;
+        int right = cols - 1;
+
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+
+            if (get(row, mid, binaryMatrix) == 1) {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+
+        if (get(row, left, binaryMatrix) == 1) {
+            if (result == -1) {
+                result = left;
+            } else {
+                result = min(result, left);
+            }
+        }
+    }
+
+    return result;
+}
+
+int main() {
+    // Initialize the binary matrix
+    BinaryMatrix binaryMatrix;
+
+    // Define the get function
+    binaryMatrix.get = get;
+
+    // Define the dimensions function
+    binaryMatrix.dimensions = dimensions;
+
+    // Example usage
+    int rows = 3;
+    int cols = 3;
+    int mat[rows][cols] = {
+        {0, 0, 0},
+        {0, 1, 1},
+        {1, 1, 1}
+    };
+
+    // Set the get function for the binary matrix
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            binaryMatrix.get = (int (*)(int, int))(&mat[i][j]);
+        }
+    }
+
+    // Find the leftmost column with at least a one
+    int result = leftMostColumnWithOne(&binaryMatrix);
+
+    printf("Leftmost column with at least a one: %d\n", result);
+
+    return 0;
+}
