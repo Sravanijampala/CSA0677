@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the binary tree node structure
+typedef struct Node {
+    int val;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+// Function to create a new binary tree node
+Node* newNode(int val) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->val = val;
+    node->left = node->right = NULL;
+    return node;
+}
+
+// Function to check if a given string is a valid sequence from the root to leaves path in a binary tree
+int isValidSequence(Node* root, int* arr, int arrSize) {
+    if (root == NULL) {
+        return arrSize == 0;
+    }
+
+    if (root->val != arr[0]) {
+        return 0;
+    }
+
+    arr++;
+
+    if (arrSize == 1) {
+        return 1;
+    }
+
+    return isValidSequence(root->left, arr, arrSize - 1) || isValidSequence(root->right, arr, arrSize - 1);
+}
+
+int main() {
+    // Create the binary tree
+    Node* root = newNode(0);
+    root->left = newNode(1);
+    root->right = newNode(0);
+    root->left->left = newNode(0);
+    root->left->right = newNode(1);
+    root->right->left = newNode(0);
+    root->right->right = newNode(0);
+
+    // Define the array of integers
+    int arr[] = {0, 1, 0, 1};
+    int arrSize = sizeof(arr) / sizeof(arr[0]);
+
+    // Check if the given string is a valid sequence from the root to leaves path in the binary tree
+    int result = isValidSequence(root, arr, arrSize);
+
+    printf("Is the given string a valid sequence? %d\n", result);
+
+    return 0;
+}
