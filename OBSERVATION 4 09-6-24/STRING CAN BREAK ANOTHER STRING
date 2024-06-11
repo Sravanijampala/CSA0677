@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+
+bool checkIfCanBreak(char * s1, char * s2){
+    int n = strlen(s1);
+    char s1_sorted[n+1], s2_sorted[n+1];
+    strcpy(s1_sorted, s1);
+    strcpy(s2_sorted, s2);
+    qsort(s1_sorted, n, sizeof(char), (int()(const void, const void*))strcmp);
+    qsort(s2_sorted, n, sizeof(char), (int()(const void, const void*))strcmp);
+
+    bool can_break_s1_s2 = true, can_break_s2_s1 = true;
+    for(int i=0; i<n; i++){
+        if(s1_sorted[i] < s2_sorted[i]){
+            can_break_s1_s2 = false;
+            break;
+        }
+    }
+
+    for(int i=0; i<n; i++){
+        if(s2_sorted[i] < s1_sorted[i]){
+            can_break_s2_s1 = false;
+            break;
+        }
+    }
+
+    return can_break_s1_s2 || can_break_s2_s1;
+}
+
+int main() {
+    char s1[] = "abc";
+    char s2[] = "xya";
+    printf("%s\n", checkIfCanBreak(s1, s2) ? "true" : "false");
+    return 0;
+}
