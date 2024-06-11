@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char *stringShift(char *s, int **shift, int shiftSize) {
+    int n = strlen(s);
+    int totalShift = 0;
+    for (int i = 0; i < shiftSize; i++) {
+        if (shift[i][0] == 0) {
+            totalShift -= shift[i][1];
+        } else {
+            totalShift += shift[i][1];
+        }
+    }
+    totalShift %= n;
+    if (totalShift < 0) {
+        totalShift += n;
+    }
+    char *result = (char *)malloc((n + 1) * sizeof(char));
+    for (int i = 0; i < n; i++) {
+        if (i + totalShift < n) {
+            result[i] = s[i + totalShift];
+        } else {
+            result[i] = s[i + totalShift - n];
+        }
+    }
+    result[n] = '\0';
+    return result;
+}
+
+int main() {
+    char *s = "abc";
+    int *shift = (int *)malloc(2 * sizeof(int *));
+    shift[0] = (int *)malloc(2 * sizeof(int));
+    shift[1] = (int *)malloc(2 * sizeof(int));
+    shift[0][0] = 1;
+    shift[0][1] = 3;
+    shift[1][0] = 0;
+    shift[1][1] = 1;
+    int shiftSize = 2;
+    char *result = stringShift(s, shift, shiftSize);
+    printf("%s\n", result);
+    free(result);
+    free(shift[0]);
+    free(shift[1]);
+    free(shift);
+    return 0;
+}
