@@ -1,0 +1,59 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a linked list node
+typedef struct Node {
+    int val;
+    struct Node* next;
+} Node;
+
+// Function to create a new node
+Node* newNode(int val) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+// Function to remove duplicates from a sorted linked list
+Node* deleteDuplicates(Node* head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    Node* current = head;
+    while (current->next != NULL) {
+        if (current->val == current->next->val) {
+            Node* temp = current->next;
+            current->next = current->next->next;
+            free(temp);
+        } else {
+            current = current->next;
+        }
+    }
+    return head;
+}
+
+// Function to print the linked list
+void printList(Node* head) {
+    while (head != NULL) {
+        printf("%d ", head->val);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    // Create the linked list: 1 -> 1 -> 2
+    Node* head = newNode(1);
+    head->next = newNode(1);
+    head->next->next = newNode(2);
+
+    // Remove duplicates
+    head = deleteDuplicates(head);
+
+    // Print the linked list
+    printList(head);
+
+    return 0;
+}
