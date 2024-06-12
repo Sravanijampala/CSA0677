@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+// Function to remove duplicates from a sorted array
+int removeDuplicates(int* nums, int numsSize) {
+    // Initialize two pointers, one for the current element and one for the next element
+    int i = 0, j = 1;
+
+    // Iterate through the array
+    while (j < numsSize) {
+        // If the current element is different from the next element, move the next element to the current position
+        if (nums[i] != nums[j]) {
+            i++;
+            nums[i] = nums[j];
+        }
+        j++;
+    }
+
+    // Return the number of unique elements
+    return i + 1;
+}
+
+int main() {
+    int nums[] = {1, 1, 2};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int k = removeDuplicates(nums, numsSize);
+
+    // Print the modified array
+    for (int i = 0; i < k; i++) {
+        printf("%d ", nums[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
