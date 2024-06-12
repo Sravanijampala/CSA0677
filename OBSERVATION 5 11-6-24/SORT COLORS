@@ -1,0 +1,46 @@
+#include <stdio.h>
+
+// Function to sort colors in-place
+void sortColors(int* nums, int numsSize) {
+    int low = 0, mid = 0, high = numsSize - 1;
+
+    // Iterate through the array
+    while (mid <= high) {
+        switch (nums[mid]) {
+            case 0:
+                // Swap the current element with the low element
+                int temp = nums[low];
+                nums[low] = nums[mid];
+                nums[mid] = temp;
+                low++;
+                mid++;
+                break;
+            case 1:
+                mid++;
+                break;
+            case 2:
+                // Swap the current element with the high element
+                temp = nums[high];
+                nums[high] = nums[mid];
+                nums[mid] = temp;
+                high--;
+                break;
+        }
+    }
+}
+
+int main() {
+    int nums[] = {2, 0, 2, 1, 1, 0};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+
+    // Sort the colors
+    sortColors(nums, numsSize);
+
+    // Print the sorted array
+    for (int i = 0; i < numsSize; i++) {
+        printf("%d ", nums[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
