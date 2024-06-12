@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a binary tree node
+typedef struct Node {
+    int val;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+// Function to create a new node
+Node* newNode(int val) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->val = val;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+// Function to convert a sorted array to a height-balanced binary search tree
+Node* sortedArrayToBST(int* nums, int left, int right) {
+    if (left > right) {
+        return NULL;
+    }
+
+    int mid = left + (right - left) / 2;
+
+    Node* node = newNode(nums[mid]);
+    node->left = sortedArrayToBST(nums, left, mid - 1);
+    node->right = sortedArrayToBST(nums, mid + 1, right);
+
+    return node;
+}
+
+// Function to print the binary tree
+void printTree(Node* node, int level) {
+    if (node == NULL) {
+        return;
+    }
+
+    printTree(node->right, level + 1);
+    for (int i = 0; i < level; i++) {
+        printf("  ");
+    }
+    printf("%d\n", node->val);
+    printTree(node->left, level + 1);
+}
+
+int main() {
+    // Initialize the array
+    int nums[] = {-10, -3, 0, 5, 9};
+    int n = sizeof(nums) / sizeof(nums[0]);
+
+    // Convert the array to a binary search tree
+    Node* root = sortedArrayToBST(nums, 0, n - 1);
+
+    // Print the binary tree
+    printTree(root, 0);
+
+    return 0;
+}
