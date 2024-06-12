@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure for a linked list node
+typedef struct Node {
+    int val;
+    struct Node* next;
+} Node;
+
+// Function to create a new linked list node
+Node* newNode(int val) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+// Function to merge two sorted linked lists
+Node* mergeTwoLists(Node* list1, Node* list2) {
+    // Create a new head for the merged list
+    Node* head = NULL;
+    Node** current = &head;
+
+    // Merge nodes from both lists until one of them becomes empty
+    while (list1 && list2) {
+        if (list1->val <= list2->val) {
+            *current = list1;
+            list1 = list1->next;
+        } else {
+            *current = list2;
+            list2 = list2->next;
+        }
+        current = &((*current)->next);
+    }
+
+    // If list1 is not empty, append its nodes to the merged list
+    if (list1) {
+        *current = list1;
+    }
+    // If list2 is not empty, append its nodes to the merged list
+    else {
+        *current = list2;
+    }
+
+    return head;
+}
+
+// Function to merge k sorted linked lists
+Node* mergeKLists(Node** lists, int k) {
+    // Create a priority queue to store the heads of the linked lists
+    Node** queue = (Node**)malloc(k * sizeof(Node*));
+    int front = 0, rear = 0;
+
+    // Initialize the priority queue with the heads of the linked lists
+    for (int i = 0; i < k; i++) {
+        if (lists[i]) {
+            queue[rear++] = lists[i];
+        }
+    }
+
+    // Create a new head for the merged list
+    Node* head = NULL;
+    Node** current = &head;
+
+    // Merge the linked lists in the priority queue
+    while (rear > 0) {
+        Node* smallest = queue[front];
+        *current = smallest;
+        current = &((*current)->next);
+
+        // Remove the smallest node from the priority queue
+        lists[front] = smallest->next;
+        if (lists[front]) {
+            queue[front] = lists[front];
+        } else {
+            front = (front + 1) % k;
+        }
+
+        // Add the next node from the priority queue if it exists
+        if (rear > 1) {
+            rear--;
+            queue[rear] = lists[front];
+        }
+
+        // Update the smallest node
+        smallest = queue[front];
+    }
+
+    return head;
+}
+
+// Function to print the linked list
+void printList(Node* head) {
+    while (head) {
+        printf("%d ", head->val);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    // Create the linked lists
+    Node* list1 = newNode(1);
+    list1->next = newNode(4);
+    list1->next->next = newNode(5);
+
+    Node* list2 = newNode(1);
+    list2->next = newNode(3);
+    list2->next->next = newNode(4);
+
+    Node* list3 = newNode(2);
+    list3->next = newNode(6);
+
+    // Create an array of linked lists
+    Node** lists = (Node**)malloc(3 * sizeof(Node*));
+    lists[0] = list1;
+    lists[1] = list2;
+    lists[2] = list3;
+
+    // Merge the linked lists
+    Node* mergedList = mergeKLists(lists, 3);
+
+    // Print the merged linked list
+    printList(mergedList);
+
+    return 0;
+}
