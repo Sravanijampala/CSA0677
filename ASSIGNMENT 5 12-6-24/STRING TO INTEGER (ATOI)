@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <limits.h>
+
+int myAtoi(char * s) {
+    int sign = 1;
+    int result = 0;
+    int i = 0;
+    
+    // Step 1: Ignore leading whitespace
+    while (s[i] == ' ') {
+        i++;
+    }
+    
+    // Step 2: Determine sign
+    if (s[i] == '-' || s[i] == '+') {
+        sign = (s[i] == '-') ? -1 : 1;
+        i++;
+    }
+    
+    // Step 3: Read digits until non-digit character or end of string
+    while (s[i] >= '0' && s[i] <= '9') {
+        // Step 4: Convert digits to integer
+        int digit = s[i] - '0';
+        // Check for integer overflow
+        if (result > INT_MAX / 10 || (result == INT_MAX / 10 && digit > INT_MAX % 10)) {
+            return (sign == 1) ? INT_MAX : INT_MIN;
+        }
+        result = result * 10 + digit;
+        i++;
+    }
+    
+    // Step 6: Return the final result
+    return sign * result;
+}
+
+int main() {
+    char s[] = "42";
+    int result = myAtoi(s);
+    printf("Output: %d\n", result);
+    return 0;
+}
