@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+
+int minPenalty(char *customers) {
+    int n = strlen(customers);
+    int minPenalty = INT_MAX;
+    int minPenaltyIndex = 0;
+
+    for (int i = 0; i < n; i++) {
+        int penalty = 0;
+        for (int j = 0; j < i; j++) {
+            if (customers[j] == 'N') {
+                penalty++;
+            }
+        }
+        for (int j = i + 1; j < n; j++) {
+            if (customers[j] == 'Y') {
+                penalty++;
+            }
+        }
+        if (penalty < minPenalty) {
+            minPenalty = penalty;
+            minPenaltyIndex = i;
+        }
+    }
+
+    return minPenaltyIndex;
+}
+
+int main() {
+    char customers[] = "YYNY";
+    printf("Minimum penalty hour: %d\n", minPenalty(customers));
+    return 0;
+}
