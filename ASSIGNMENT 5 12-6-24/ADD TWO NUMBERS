@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definition for singly-linked list.
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+// Function to create a new node
+struct ListNode* newNode(int val) {
+    struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+// Function to add two numbers represented by linked lists
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+    struct ListNode* dummy = newNode(0); // Dummy node to start the result linked list
+    struct ListNode* curr = dummy;
+    int carry = 0;
+    
+    while (l1 != NULL || l2 != NULL) {
+        int sum = carry;
+        if (l1 != NULL) {
+            sum += l1->val;
+            l1 = l1->next;
+        }
+        if (l2 != NULL) {
+            sum += l2->val;
+            l2 = l2->next;
+        }
+        carry = sum / 10;
+        curr->next = newNode(sum % 10);
+        curr = curr->next;
+    }
+    
+    if (carry > 0) {
+        curr->next = newNode(carry);
+    }
+    
+    return dummy->next; // Returning the result linked list, skipping the dummy node
+}
+
+// Function to print a linked list
+void printList(struct ListNode* head) {
+    while (head != NULL) {
+        printf("%d ", head->val);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+// Main function
+int main() {
+    // Example lists
+    struct ListNode* l1 = newNode(2);
+    l1->next = newNode(4);
+    l1->next->next = newNode(3);
+
+    struct ListNode* l2 = newNode(5);
+    l2->next = newNode(6);
+    l2->next->next = newNode(4);
+
+    // Printing input lists
+    printf("Input: ");
+    printList(l1);
+    printList(l2);
+
+    // Adding two numbers represented by linked lists
+    struct ListNode* sum = addTwoNumbers(l1, l2);
+
+    // Printing the sum
+    printf("Output: ");
+    printList(sum);
+
+    return 0;
+}
