@@ -1,0 +1,10 @@
+#include <math.h>
+
+class Solution {
+public:
+    int pivotInteger(int n) {
+        int sum = n * (n + 1) / 2;
+        int sqrtOfSum = static_cast<int>(sqrt(sum));
+        return sqrtOfSum * sqrtOfSum == sum ? sqrtOfSum : -1;
+    }
+};
