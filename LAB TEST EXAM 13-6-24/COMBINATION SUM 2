@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int compare(const void *a, const void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+void backtrack(int *candidates, int candidatesSize, int target, int start, int *temp, int tempSize, int **result, int *returnSize, int **returnColumnSizes) {
+    if (target == 0) {
+        result[*returnSize] = (int *)malloc(tempSize * sizeof(int));
+        (*returnColumnSizes)[*returnSize] = tempSize;
+        memcpy(result[(*returnSize)++], temp, tempSize * sizeof(int));
+        return;
+    }
+
+    for (int i = start; i < candidatesSize; i++) {
+        if (i > start && candidates[i] == candidates[i - 1]) {
+            continue;
+        }
+        if (candidates[i] > target) {
+            break;
+        }
+        temp[tempSize++] = candidates[i];
+        backtrack(candidates, candidatesSize, target - candidates[i], i + 1, temp, tempSize, result, returnSize, returnColumnSizes);
+        tempSize--;
+    }
+}
+
+int **combinationSum2(int *candidates, int candidatesSize, int target, int *returnSize, int **returnColumnSizes) {
+    qsort(candidates, candidatesSize, sizeof(int), compare);
+    int **result = (int **)malloc(1000 * sizeof(int *));
+    *returnColumnSizes = (int *)malloc(1000 * sizeof(int));
+    int *temp = (int *)malloc(candidatesSize * sizeof(int));
+    *returnSize = 0;
+    backtrack(candidates, candidatesSize, target, 0, temp, 0, result, returnSize, returnColumnSizes);
+    return result;
+}
+
+int main() {
+    int candidates[] = {10, 1, 2, 7, 6, 1, 5};
+    int target = 8;
+    int returnSize;
+    int *returnColumnSizes;
+    int **result = combinationSum2(candidates, 7, target, &returnSize, &returnColumnSizes);
+
+    for (int i = 0; i < returnSize; i++) {
+        printf("[");
+        for (int j = 0; j < returnColumnSizes[i]; j++) {
+            printf("%d ", result[i][j]);
+        }
+        printf("]\n");
+    }
+
+    return 0;
+}
