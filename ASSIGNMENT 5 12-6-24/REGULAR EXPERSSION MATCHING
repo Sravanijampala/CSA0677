@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+bool isMatch(char *s, char *p) {
+    // Base case: if pattern is empty, the only way to match is if the string is also empty
+    if (*p == '\0') {
+        return *s == '\0';
+    }
+    
+    // Check if the next character in pattern is followed by '*'
+    bool isNextStar = *(p + 1) == '*';
+    
+    // Case 1: Pattern has '*', we can either skip the current character or keep matching it
+    if (isNextStar) {
+        // Skip current character and '*' in pattern
+        if (isMatch(s, p + 2)) {
+            return true;
+        }
+        // Match current character and advance in the string
+        while (*s != '\0' && (*s == *p || *p == '.')) {
+            if (isMatch(++s, p + 2)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    // Case 2: No '*' after current character, check if current characters match
+    return (*s != '\0' && (*s == *p || *p == '.')) && isMatch(s + 1, p + 1);
+}
+
+int main() {
+    char s[] = "aa";
+    char p[] = "a";
+    bool result = isMatch(s, p);
+    printf("Output: %s\n", result ? "true" : "false");
+    return 0;
+}
