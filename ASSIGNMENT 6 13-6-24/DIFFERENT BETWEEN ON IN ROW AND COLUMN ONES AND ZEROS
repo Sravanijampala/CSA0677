@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string.h>
+
+int minPenalty(char *customers) {
+    int n = strlen(customers);
+    int minPenalty = 0;
+    int minPenaltyIndex = 0;
+    int prefixSum = 0;
+    int postfixSum = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (customers[i] == 'N') {
+            prefixSum++;
+        } else {
+            postfixSum++;
+        }
+    }
+
+    for (int i = 0; i < n; i++) {
+        if (customers[i] == 'N') {
+            prefixSum--;
+        } else {
+            postfixSum--;
+        }
+        int penalty = prefixSum + postfixSum;
+        if (penalty < minPenalty) {
+            minPenalty = penalty;
+            minPenaltyIndex = i;
+        }
+    }
+
+    return minPenaltyIndex;
+}
+
+int main() {
+    char customers[] = "YYNY";
+    printf("Minimum penalty hour: %d\n", minPenalty(customers));
+    return 0;
+}
