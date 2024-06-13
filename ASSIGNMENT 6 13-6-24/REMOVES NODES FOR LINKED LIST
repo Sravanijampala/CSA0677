@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+struct ListNode *removeNodes(struct ListNode *head) {
+    if (head == NULL || head->next == NULL) {
+        return head;
+    }
+
+    struct ListNode *maxNode = head;
+    struct ListNode *prev = NULL;
+    struct ListNode *curr = head;
+
+    while (curr != NULL) {
+        if (curr->val >= maxNode->val) {
+            maxNode = curr;
+            if (prev != NULL) {
+                prev->next = curr;
+            }
+        } else {
+            if (prev == NULL) {
+                head = curr->next;
+            } else {
+                prev->next = curr->next;
+            }
+        }
+        prev = curr;
+        curr = curr->next;
+    }
+
+    return head;
+}
+
+int main() {
+    struct ListNode *head = (struct ListNode *)malloc(sizeof(struct ListNode));
+    head->val = 5;
+    head->next = (struct ListNode *)malloc(sizeof(struct ListNode));
+    head->next->val = 2;
+    head->next->next = (struct ListNode *)malloc(sizeof(struct ListNode));
+    head->next->next->val = 13;
+    head->next->next->next = (struct ListNode *)malloc(sizeof(struct ListNode));
+    head->next->next->next->val = 3;
+    head->next->next->next->next = (struct ListNode *)malloc(sizeof(struct ListNode));
+    head->next->next->next->next->val = 8;
+    head->next->next->next->next->next = NULL;
+
+    struct ListNode *newHead = removeNodes(head);
+
+    struct ListNode *curr = newHead;
+    while (curr != NULL) {
+        printf("%d ", curr->val);
+        curr = curr->next;
+    }
+    printf("\n");
+
+    return 0;
+}
