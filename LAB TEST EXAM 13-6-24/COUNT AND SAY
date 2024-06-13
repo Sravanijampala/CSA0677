@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+char *countAndSay(int n) {
+    static char result[10000];
+    if (n == 1) {
+        strcpy(result, "1");
+        return result;
+    }
+    char *prev = countAndSay(n - 1);
+    char *res = result;
+    char *p = prev;
+    while (*p) {
+        char c = *p;
+        int count = 1;
+        while (*p && *p == *(p + 1)) {
+            ++p;
+            ++count;
+        }
+        res += sprintf(res, "%d%c", count, c);
+        ++p;
+    }
+    *res = '\0';
+    return result;
+}
+
+int main() {
+    int n = 5;
+    char *result = countAndSay(n);
+    printf("The count-and-say sequence for n = %d is: %s\n", n, result);
+    return 0;
+}
