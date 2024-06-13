@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+
+int lengthOfLongestSubstring(char *s) {
+    int n = strlen(s);
+    int maxLength = 0;
+    int charIndex[128]; // Assuming ASCII characters
+    
+    // Initialize charIndex array to store the index of each character
+    memset(charIndex, -1, sizeof(charIndex));
+    
+    int start = 0;
+    for (int end = 0; end < n; end++) {
+        // If the current character is encountered before, update start to the next character of the previous occurrence
+        if (charIndex[s[end]] != -1) {
+            start = MAX(start, charIndex[s[end]] + 1);
+        }
+        // Update the index of the current character
+        charIndex[s[end]] = end;
+        // Update the maxLength
+        maxLength = MAX(maxLength, end - start + 1);
+    }
+    
+    return maxLength;
+}
+
+int main() {
+    char s[] = "abcabcbb";
+    int result = lengthOfLongestSubstring(s);
+    printf("Output: %d\n", result);
+    return 0;
+}
