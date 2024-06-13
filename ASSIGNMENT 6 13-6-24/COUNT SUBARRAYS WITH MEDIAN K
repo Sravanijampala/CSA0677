@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int countSubarrays(int *nums, int n, int k) {
+    int count = 0;
+    int balance = 0;
+    int leftCount = 0;
+    int rightCount[1001] = {0};
+
+    for (int i = 0; i < n; i++) {
+        if (nums[i] > k) {
+            balance++;
+        } else if (nums[i] < k) {
+            balance--;
+        }
+
+        if (balance == 0) {
+            count++;
+        }
+
+        if (balance > 0) {
+            rightCount[balance]++;
+        }
+
+        if (balance < 0) {
+            leftCount += rightCount[-balance];
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int nums[] = {3, 2, 1, 4, 5};
+    int n = sizeof(nums) / sizeof(nums[0]);
+    int k = 4;
+
+    printf("Number of subarrays with median %d: %d\n", k, countSubarrays(nums, n, k));
+
+    return 0;
+}
