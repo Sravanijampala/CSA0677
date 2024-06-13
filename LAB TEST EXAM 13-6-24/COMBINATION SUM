@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define ARRAY_MAX 19
+
+int array_input[ARRAY_MAX] = {
+    2, 4, 6, 8
+};
+
+int find_sum_combination_in_array(int start, int size, int *ele_arr, int ele_num, int expect_val) {
+    int i, j;
+    static int lvl = 0;
+    for (i = start; i < size; i++) {
+        if (lvl == (ele_num - 1)) {
+            if (array_input[i] == expect_val) {
+                ele_arr[lvl] = array_input[i];
+                printf("Combination: ");
+                for (j = 0; j < ele_num; j++) {
+                    printf("%d ", ele_arr[j]);
+                }
+                printf("\n");
+            }
+        } else {
+            ele_arr[lvl] = array_input[i];
+            lvl++;
+            find_sum_combination_in_array(i + 1, size, ele_arr, ele_num, expect_val - array_input[i]);
+        }
+    }
+    if (lvl != 0) {
+        lvl--;
+    }
+    return 0;
+}
+
+int main() {
+    int ele_num;
+    int ele_arr[ARRAY_MAX] = {0};
+    ele_num = 3;
+    printf("\n");
+    memset(ele_arr, 0, ARRAY_MAX * sizeof(int));
+    find_sum_combination_in_array(0, ARRAY_MAX, &ele_arr, ele_num, 8);
+    return 0;
+}
