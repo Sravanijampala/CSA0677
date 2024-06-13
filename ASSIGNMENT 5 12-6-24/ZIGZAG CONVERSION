@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+char * convert(char * s, int numRows) {
+    int len = strlen(s);
+    if (numRows == 1 || len <= numRows) {
+        return s;
+    }
+    
+    char *result = (char *)malloc((len + 1) * sizeof(char));
+    int interval = 2 * numRows - 2;
+    int index = 0;
+    
+    // First row
+    for (int i = 0; i < len; i += interval) {
+        result[index++] = s[i];
+    }
+    
+    // Middle rows
+    for (int i = 1; i < numRows - 1; i++) {
+        for (int j = i; j < len; j += interval) {
+            result[index++] = s[j];
+            if (j + (interval - 2 * i) < len) {
+                result[index++] = s[j + (interval - 2 * i)];
+            }
+        }
+    }
+    
+    // Last row
+    for (int i = numRows - 1; i < len; i += interval) {
+        result[index++] = s[i];
+    }
+    
+    result[index] = '\0'; // Null-terminate the string
+    return result;
+}
+
+int main() {
+    char s[] = "PAYPALISHIRING";
+    int numRows = 3;
+    char *result = convert(s, numRows);
+    printf("Output: %s\n", result);
+    free(result); // Free allocated memory
+    return 0;
+}
