@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_CITIES 10000
+
+// Structure to represent a city
+struct City {
+    int id;
+    struct City* next;
+};
+
+// Function to initialize a city
+struct City* newCity(int id) {
+    struct City* city = (struct City*)malloc(sizeof(struct City));
+    city->id = id;
+    city->next = NULL;
+    return city;
+}
+
+// Depth-first search to calculate the minimum fuel cost
+void dfs(struct City* cities[], int node, int seats, int fuel_cost[], bool visited[], int parent) {
+    visited[node] = true;
+    struct City* current = cities[node];
+    int total_children_seats = 0;
+
+    while (current != NULL) {
+        if (!visited[current->id]) {
+            dfs(cities, current->id, seats, fuel_cost, visited, node);
+            total_children_seats += seats;
+            fuel_cost[node] += fuel_cost[current->id];
+        }
+        current = current->next;
+    }
+
+    int remaining_representatives = total_children_seats - fuel_cost[node];
+    int rides_needed = (remaining_representatives + seats - 1) / seats;
+    fuel_cost[node] += rides_needed;
+}
+
+// Function to add an undirected road between two cities
+void addRoad(struct City* cities[], int a, int b) {
+    struct City* temp = cities[a];
+    if (temp == NULL) {
+        cities[a] = newCity(b);
+    } else {
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newCity(b);
+    }
+
+    temp = cities[b];
+    if (temp == NULL) {
+        cities[b] = newCity(a);
+    } else {
+        while (temp->next != NULL) {
+            temp = temp->next;
+        }
+        temp->next = newCity(a);
+    }
+}
+
+// Function to calculate the minimum fuel cost to reach the capital city
+int minFuelCost(int roads[][2], int n, int seats) {
+    struct City* cities[MAX_CITIES] = { NULL }; // Array to store adjacency list of cities
+    int fuel_cost[MAX_CITIES] = { 0 }; // Array to store fuel cost for each city
+    bool visited[MAX_CITIES] = { false }; // Array to mark visited cities
+    int i;
+
+    // Create the graph
+    for (i = 0; i < n - 1; ++i) {
+        addRoad(cities, roads[i][0], roads[i][1]);
+    }
+
+    // Perform DFS to calculate fuel cost
+    dfs(cities, 0, seats, fuel_cost, visited, -1);
+
+    return fuel_cost[0]; // Return the fuel cost for the capital city
+}
+
+int main() {
+    int roads[][2] = {{0, 1}, {0, 2}, {0, 3}};
+    int seats = 5;
+    int n = sizeof(roads) / sizeof(roads[0]);
+
+    int min_fuel_cost = minFuelCost(roads, n, seats);
+    printf("Minimum fuel cost to reach the capital city: %d\n", min_fuel_cost);
+
+    return 0;
+}
