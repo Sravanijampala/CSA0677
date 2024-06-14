@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MOD 1000000007
+#define MAX_LEN 1005
+
+// Function to check if a number is prime
+int isPrime(int num) {
+    if (num == 2 || num == 3 || num == 5 || num == 7)
+        return 1;
+    return 0;
+}
+
+// Function to calculate the number of beautiful partitions
+int countBeautifulPartitions(char *s, int k, int minLength) {
+    int n = strlen(s);
+    int dp[n + 1][k + 1][2]; // dp[i][j][0] stores count of beautiful partitions till index i with j partitions ending with a prime digit
+                             // dp[i][j][1] stores count of beautiful partitions till index i with j partitions ending with a non-prime digit
+    memset(dp, 0, sizeof(dp));
+    dp[0][0][0] = dp[0][0][1] = 1; // Base case, empty string with 0 partitions
+    
+    // Fill the dp table
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= k; j++) {
+            for (int len = minLength; len <= i && len <= j * minLength; len++) {
+                if (i - len >= 0) {
+                    int prime = isPrime(s[i - len] - '0');
+                    dp[i][j][prime] = (dp[i][j][prime] + dp[i - len][j - 1][1 - prime]) % MOD;
+                }
+            }
+        }
+    }
+    
+    int result = 0;
+    for (int i = 0; i <= n; i++) {
+        result = (result + dp[i][k][0]) % MOD;
+    }
+    return result;
+}
+
+int main() {
+    char s[] = "23542185131";
+    int k = 3;
+    int minLength = 2;
+    
+    int beautifulPartitions = countBeautifulPartitions(s, k, minLength);
+    printf("Number of beautiful partitions: %d\n", beautifulPartitions);
+    
+    return 0;
+}
