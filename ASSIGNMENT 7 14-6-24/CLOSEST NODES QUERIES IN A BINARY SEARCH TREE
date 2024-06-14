@@ -1,0 +1,11 @@
+// Definition for a binary tree node.
+struct TreeNode {
+    int val;
+    struct TreeNode *left;
+    struct TreeNode *right;
+};
+
+int findClosestValueInBst(struct TreeNode* root, int target);
+int findClosestSmaller(struct TreeNode* root, int target);
+int findClosestLarger(struct TreeNode* root, int target);
+int** closestNodesQueries(struct TreeNode* root, int* queries, int queriesSize);
