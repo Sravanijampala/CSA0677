@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int countUnequalTriplets(int nums[], int numsSize) {
+    int count = 0;
+    for (int i = 0; i < numsSize - 2; i++) {
+        for (int j = i + 1; j < numsSize - 1; j++) {
+            for (int k = j + 1; k < numsSize; k++) {
+                if (nums[i] != nums[j] && nums[i] != nums[k] && nums[j] != nums[k]) {
+                    count++;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    int nums[] = {4, 4, 2, 4, 3};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int result = countUnequalTriplets(nums, numsSize);
+    printf("Number of Unequal Triplets: %d\n", result);
+    return 0;
+}
