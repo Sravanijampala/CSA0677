@@ -1,0 +1,36 @@
+#include <stdio.h>
+#include <string.h>
+
+int isPalindrome(char *str, int start, int end) {
+    while (start < end) {
+        if (str[start] != str[end])
+            return 0;
+        start++;
+        end--;
+    }
+    return 1;
+}
+
+int maxNumOfSubstrings(char *s, int k) {
+    int count = 0;
+    int len = strlen(s);
+
+    for (int i = 0; i < len; i++) {
+        for (int j = i + k - 1; j < len; j++) {
+            if (isPalindrome(s, i, j)) {
+                count++;
+                i = j; // Move to the end of the palindrome
+                break;
+            }
+        }
+    }
+    return count;
+}
+
+int main() {
+    char s[] = "abaccdbbd";
+    int k = 3;
+    int result = maxNumOfSubstrings(s, k);
+    printf("Output: %d\n", result);
+    return 0;
+}
