@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int maxSubarraySum(int* nums, int numsSize, int k) {
+    int sum = 0, maxSum = 0;
+    int freq[100001] = {0};
+
+    for (int i = 0; i < k; i++) {
+        sum += nums[i];
+        freq[nums[i]]++;
+    }
+
+    maxSum = sum;
+
+    for (int i = k; i < numsSize; i++) {
+        sum = sum - nums[i - k] + nums[i];
+        if (freq[nums[i]] == 0) {
+            maxSum = (sum > maxSum) ? sum : maxSum;
+        }
+        freq[nums[i - k]]--;
+        freq[nums[i]]++;
+    }
+
+    return maxSum;
+}
+
+int main() {
+    int nums[] = {1, 5, 4, 2, 9, 9, 9};
+    int k = 3;
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int result = maxSubarraySum(nums, numsSize, k);
+    printf("Output: %d\n", result);
+    return 0;
+}
