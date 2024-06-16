@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_NODES 100
+
+struct Node {
+    int value;
+    struct Node* children[MAX_NODES];
+};
+
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->value = value;
+    for (int i = 0; i < MAX_NODES; i++) {
+        newNode->children[i] = NULL;
+    }
+    return newNode;
+}
+
+int maxProfit(struct Node* root) {
+    if (root == NULL) {
+        return 0;
+    }
+    
+    int maxProfit = root->value;
+    for (int i = 0; i < MAX_NODES; i++) {
+        if (root->children[i] != NULL) {
+            maxProfit += maxProfit(root->children[i]);
+        }
+    }
+    
+    return maxProfit;
+}
+
+int main() {
+    struct Node* root = createNode(10);
+    root->children[0] = createNode(5);
+    root->children[1] = createNode(15);
+    root->children[0]->children[0] = createNode(2);
+    root->children[0]->children[1] = createNode(7);
+    
+    int profit = maxProfit(root);
+    printf("The maximum profit is: %d\n", profit);
+    
+    return 0;
+}
