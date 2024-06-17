@@ -1,0 +1,113 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <float.h>
+
+// Structure to represent a point in 2D space
+struct Point {
+    int x, y;
+};
+
+// Function to compute the distance between two points
+float distance(struct Point p1, struct Point p2) {
+    return sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
+}
+
+// Function to compare points based on their y-coordinate
+int compareY(const void* a, const void* b) {
+    struct Point *p1 = (struct Point *)a;
+    struct Point *p2 = (struct Point *)b;
+    return (p1->y - p2->y);
+}
+
+// Function to compare points based on their x-coordinate
+int compareX(const void* a, const void* b) {
+    struct Point *p1 = (struct Point *)a;
+    struct Point *p2 = (struct Point *)b;
+    return (p1->x - p2->x);
+}
+
+// Function to find the minimum of two float values
+float min(float x, float y) {
+    return (x < y) ? x : y;
+}
+
+// Function to find the closest pair of points recursively
+float closestUtil(struct Point P[], int n) {
+    // Base case: if there are 2 or 3 points, use brute force
+    if (n <= 3) {
+        float min_dist = FLT_MAX;
+        for (int i = 0; i < n; ++i) {
+            for (int j = i + 1; j < n; ++j) {
+                if (distance(P[i], P[j]) < min_dist) {
+                    min_dist = distance(P[i], P[j]);
+                }
+            }
+        }
+        return min_dist;
+    }
+
+    // Sort points based on x coordinates
+    int mid = n / 2;
+    struct Point midPoint = P[mid];
+
+    // Divide the array into two halves
+    struct Point Pleft[mid];
+    struct Point Pright[n - mid];
+    for (int i = 0; i < mid; i++)
+        Pleft[i] = P[i];
+    for (int i = mid; i < n; i++)
+        Pright[i - mid] = P[i];
+
+    // Recursively find the smallest distance in each half
+    float dl = closestUtil(Pleft, mid);
+    float dr = closestUtil(Pright, n - mid);
+
+    // Find the smaller of two distances
+    float d = min(dl, dr);
+
+    // Build an array of points within the strip that are within d distance of the middle line
+    struct Point strip[n];
+    int j = 0;
+    for (int i = 0; i < n; i++) {
+        if (abs(P[i].x - midPoint.x) < d) {
+            strip[j] = P[i];
+            j++;
+        }
+    }
+
+    // Compute the smallest distance in the strip
+    float min_strip = d;
+    qsort(strip, j, sizeof(struct Point), compareY);
+    for (int i = 0; i < j; ++i) {
+        for (int k = i + 1; k < j && (strip[k].y - strip[i].y) < min_strip; ++k) {
+            if (distance(strip[i], strip[k]) < min_strip) {
+                min_strip = distance(strip[i], strip[k]);
+            }
+        }
+    }
+
+    // Return the smallest of the two distances
+    return min(d, min_strip);
+}
+
+// Function to find the closest pair of points
+float closestPair(struct Point P[], int n) {
+    // Sort points based on x coordinates
+    qsort(P, n, sizeof(struct Point), compareX);
+
+    // Use recursive function to find the smallest distance
+    return closestUtil(P, n);
+}
+
+// Driver program to test above functions
+int main() {
+    struct Point P[] = {{2, 3}, {12, 30}, {40, 50}, {5, 1}, {12, 10}, {3, 4}};
+    int n = sizeof(P) / sizeof(P[0]);
+
+    float min_dist = closestPair(P, n);
+
+    printf("The smallest distance is %f\n", min_dist);
+
+    return 0;
+}
