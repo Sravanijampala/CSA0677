@@ -1,0 +1,191 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definition of a node in the binary search tree
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+// Function to create a new node with given key
+struct TreeNode* createNode(int key) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    if (newNode == NULL) {
+        perror("Memory allocation failed");
+        exit(EXIT_FAILURE);
+    }
+    newNode->data = key;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a new node with given key into BST
+struct TreeNode* insert(struct TreeNode* root, int key) {
+    // If the tree is empty, return a new node
+    if (root == NULL) {
+        return createNode(key);
+    }
+
+    // Otherwise, recur down the tree
+    if (key < root->data) {
+        root->left = insert(root->left, key);
+    } else if (key > root->data) {
+        root->right = insert(root->right, key);
+    }
+
+    // return the (unchanged) node pointer
+    return root;
+}
+
+// Function to perform inorder traversal of BST
+void inorder(struct TreeNode* root) {
+    if (root != NULL) {
+        inorder(root->left);
+        printf("%d ", root->data);
+        inorder(root->right);
+    }
+}
+
+// Function to perform preorder traversal of BST
+void preorder(struct TreeNode* root) {
+    if (root != NULL) {
+        printf("%d ", root->data);
+        preorder(root->left);
+        preorder(root->right);
+    }
+}
+
+// Function to perform postorder traversal of BST
+void postorder(struct TreeNode* root) {
+    if (root != NULL) {
+        postorder(root->left);
+        postorder(root->right);
+        printf("%d ", root->data);
+    }
+}
+
+// Function to search a given key in BST
+struct TreeNode* search(struct TreeNode* root, int key) {
+    // Base Cases: root is null or key is present at root
+    if (root == NULL || root->data == key)
+        return root;
+
+    // Key is greater than root's key
+    if (root->data < key)
+        return search(root->right, key);
+
+    // Key is smaller than root's key
+    return search(root->left, key);
+}
+
+// Function to find the minimum value node in BST
+struct TreeNode* minValueNode(struct TreeNode* node) {
+    struct TreeNode* current = node;
+
+    // Loop down to find the leftmost leaf
+    while (current && current->left != NULL)
+        current = current->left;
+
+    return current;
+}
+
+// Function to delete a node with given key from BST
+struct TreeNode* deleteNode(struct TreeNode* root, int key) {
+    // Base case
+    if (root == NULL) {
+        return root;
+    }
+
+    // If the key to be deleted is smaller than the root's key, then it lies in left subtree
+    if (key < root->data) {
+        root->left = deleteNode(root->left, key);
+    }
+    // If the key to be deleted is greater than the root's key, then it lies in right subtree
+    else if (key > root->data) {
+        root->right = deleteNode(root->right, key);
+    }
+    // If key is same as root's key, then this is the node to be deleted
+    else {
+        // Node with only one child or no child
+        if (root->left == NULL) {
+            struct TreeNode* temp = root->right;
+            free(root);
+            return temp;
+        } else if (root->right == NULL) {
+            struct TreeNode* temp = root->left;
+            free(root);
+            return temp;
+        }
+
+        // Node with two children: Get the inorder successor (smallest in the right subtree)
+        struct TreeNode* temp = minValueNode(root->right);
+
+        // Copy the inorder successor's content to this node
+        root->data = temp->data;
+
+        // Delete the inorder successor
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+// Function to deallocate memory of the tree
+void freeTree(struct TreeNode* root) {
+    if (root != NULL) {
+        freeTree(root->left);
+        freeTree(root->right);
+        free(root);
+    }
+}
+
+// Driver program to test above functions
+int main() {
+    struct TreeNode* root = NULL;
+
+    // Inserting nodes into BST
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 70);
+    insert(root, 60);
+    insert(root, 80);
+
+    // Printing different traversals of the BST
+    printf("Inorder traversal: ");
+    inorder(root);
+    printf("\n");
+
+    printf("Preorder traversal: ");
+    preorder(root);
+    printf("\n");
+
+    printf("Postorder traversal: ");
+    postorder(root);
+    printf("\n");
+
+    // Search for a node in BST
+    int key = 70;
+    struct TreeNode* result = search(root, key);
+    if (result != NULL) {
+        printf("Node with key %d found in BST\n", key);
+    } else {
+        printf("Node with key %d not found in BST\n", key);
+    }
+
+    // Deleting a node from BST
+    printf("Deleting node with key %d from BST\n", key);
+    root = deleteNode(root, key);
+
+    // Printing inorder traversal after deletion
+    printf("Inorder traversal after deletion: ");
+    inorder(root);
+    printf("\n");
+
+    // Freeing memory allocated for BST
+    freeTree(root);
+
+    return 0;
+}
