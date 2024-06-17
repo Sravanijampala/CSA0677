@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to swap two integers
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Function to find median of three integers
+int medianOfThree(int a, int b, int c) {
+    if (a < b) {
+        if (b < c) return b;
+        else if (a < c) return c;
+        else return a;
+    } else {
+        if (a < c) return a;
+        else if (b < c) return c;
+        else return b;
+    }
+}
+
+// Function to partition the array around a pivot
+int partition(int arr[], int left, int right, int pivot) {
+    int pivotValue = arr[pivot];
+    // Move pivot to end
+    swap(&arr[pivot], &arr[right]);
+    int storeIndex = left;
+    // Move all smaller elements to the left
+    for (int i = left; i < right; i++) {
+        if (arr[i] < pivotValue) {
+            swap(&arr[storeIndex], &arr[i]);
+            storeIndex++;
+        }
+    }
+    // Move pivot to its final place
+    swap(&arr[right], &arr[storeIndex]);
+    return storeIndex;
+}
+
+// Function to find the k-th smallest element using median of medians algorithm
+int medianOfMedians(int arr[], int left, int right, int k) {
+    while (left <= right) {
+        // Number of elements in current subarray
+        int n = right - left + 1;
+
+        // Divide array into groups of size 5, calculate medians and swap to front
+        for (int i = 0; i < n / 5; i++) {
+            int medianIndex = left + i * 5 + 2;
+            int medianValue = arr[medianIndex];
+            int first = left + i * 5;
+            int m = partition(arr, first, first + 4, medianIndex);
+            swap(&arr[m], &arr[left + i]);
+        }
+
+        // Find median of medians recursively
+        int medianIndex = left + (n / 5) / 2;
+        int medianValue = arr[medianIndex];
+        int m = partition(arr, left, left + n / 5 - 1, medianIndex);
+
+        // If k is the median of medians, return it
+        if (m == k) {
+            return arr[m];
+        } else if (k < m) {
+            right = m - 1;
+        } else {
+            left = m + 1;
+        }
+    }
+
+    // If k is out of bounds
+    return -1;
+}
+
+// Driver function to test above functions
+int main() {
+    int arr[] = { 12, 3, 5, 7, 4, 19, 26 };
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int k = 3; // Find the 3rd smallest element (k = 3)
+
+    int result = medianOfMedians(arr, 0, n - 1, k - 1);
+
+    if (result != -1) {
+        printf("The %d-th smallest element is %d\n", k, result);
+    } else {
+        printf("Invalid input or k is out of bounds.\n");
+    }
+
+    return 0;
+}
