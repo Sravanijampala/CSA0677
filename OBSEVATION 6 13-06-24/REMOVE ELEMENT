@@ -1,0 +1,48 @@
+#include <stdio.h>
+
+// Function to remove element from array
+int removeElement(int arr[], int n, int element) {
+    int i, j;
+    // Traverse the array
+    for (i = 0; i < n; i++) {
+        // If current element is equal to the element to be removed, skip it
+        if (arr[i] == element) {
+            // Shift all subsequent elements one position to the left
+            for (j = i; j < n - 1; j++) {
+                arr[j] = arr[j + 1];
+            }
+            // Decrease the size of the array
+            n--;
+            // Since we have moved one element forward, check the same index again
+            i--;
+        }
+    }
+    // Return the new size of the array
+    return n;
+}
+
+// Function to print array elements
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+// Main function
+int main() {
+    int arr[] = {3, 1, 2, 3, 4, 5, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int elementToRemove = 3;
+
+    printf("Original array: ");
+    printArray(arr, n);
+
+    // Remove element 3 from array
+    n = removeElement(arr, n, elementToRemove);
+
+    printf("Array after removing %d: ", elementToRemove);
+    printArray(arr, n);
+
+    return 0;
+}
