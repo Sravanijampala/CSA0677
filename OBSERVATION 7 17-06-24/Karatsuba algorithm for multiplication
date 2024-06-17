@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+// Function to find maximum of two numbers
+int max(int x, int y) {
+    return (x > y) ? x : y;
+}
+
+// Function to multiply two numbers using Karatsuba algorithm
+long long karatsuba(long long X, long long Y) {
+    // Base case for single digit numbers
+    if (X < 10 || Y < 10)
+        return X * Y;
+
+    // Calculate the number of digits of X and Y
+    int num_digits = max(log10(X), log10(Y)) + 1;
+    int half_digits = ceil(num_digits / 2.0);
+
+    // Split X and Y into halves
+    long long power = pow(10, half_digits);
+    long long A = X / power;
+    long long B = X % power;
+    long long C = Y / power;
+    long long D = Y % power;
+
+    // Recursively calculate three products
+    long long AC = karatsuba(A, C);
+    long long BD = karatsuba(B, D);
+    long long AD_BC = karatsuba(A + B, C + D) - AC - BD;
+
+    // Combine the results
+    long long result = AC * pow(10, 2 * half_digits) + AD_BC * power + BD;
+    return result;
+}
+
+// Driver program to test above function
+int main() {
+    long long X, Y;
+    printf("Enter two numbers to multiply: ");
+    scanf("%lld %lld", &X, &Y);
+
+    long long result = karatsuba(X, Y);
+    printf("Multiplication result using Karatsuba algorithm: %lld\n", result);
+
+    return 0;
+}
