@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to generate the next term in the Count and Say sequence
+char* countAndSay(int n) {
+    static char result[10000];  // Static array to store result
+    char temp[10000];           // Temporary array to build the result
+    char *res = result;         // Pointer to result array
+    char *tmp = temp;           // Pointer to temporary array
+
+    if (n <= 0) {
+        result[0] = '\0';       // Return empty string for non-positive n
+        return result;
+    }
+
+    // Initialize the sequence with the first term
+    strcpy(result, "1");
+
+    // Generate the subsequent terms
+    for (int i = 2; i <= n; i++) {
+        char *p = result;    // Pointer to traverse previous term
+        while (*p) {
+            // Count occurrences of current digit
+            int count = 1;
+            char digit = *p;
+            while (*(p + 1) && *(p + 1) == *p) {
+                count++;
+                p++;
+            }
+            // Append count and digit to temporary array
+            tmp += sprintf(tmp, "%d%c", count, digit);
+            p++;
+        }
+        *tmp = '\0';         // Terminate temporary array
+        strcpy(result, temp);  // Copy temporary array to result
+        tmp = temp;          // Reset temporary array pointer
+    }
+
+    return res;              // Return pointer to result array
+}
+
+int main() {
+    int n;
+    printf("Enter the number of terms in Count and Say sequence: ");
+    scanf("%d", &n);
+
+    printf("Count and Say sequence up to term %d:\n", n);
+    for (int i = 1; i <= n; i++) {
+        printf("%d: %s\n", i, countAndSay(i));
+    }
+
+    return 0;
+}
