@@ -1,0 +1,17 @@
+#include <stdio.h>
+
+void jobSequencing(int profit[], int deadline[], int n);
+
+int main() {
+    int profit[] = {35, 30, 25, 20, 15, 12, 5};
+    int deadline[] = {3, 4, 4, 2, 3, 1, 2};
+    int n = sizeof(profit) / sizeof(profit[0]);
+
+    jobSequencing(profit, deadline, n);
+
+    return 0;
+}
+
+void jobSequencing(int profit[], int deadline[], int n) {
+    // Implementation of Job Sequencing with Deadlines
+}
