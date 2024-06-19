@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to find the minimum remaining length of string after removing a substring
+int minRemainingLength(char *string, char *sub) {
+    int len1 = strlen(string);
+    int len2 = strlen(sub);
+
+    // Initialize variables to keep track of the substring removal
+    int i, j, k;
+    int found;
+
+    for (i = 0; i <= len1 - len2; i++) {
+        found = 1;
+        // Check if substring sub starts at position i in string
+        for (j = 0, k = i; j < len2; j++, k++) {
+            if (string[k] != sub[j]) {
+                found = 0;
+                break;
+            }
+        }
+        // If substring sub is found, return the remaining length of string
+        if (found) {
+            return len1 - len2;
+        }
+    }
+
+    // If substring sub is not found, return the original length of string
+    return len1;
+}
+
+int main() {
+    char string[100], sub[100];
+
+    printf("Enter a string: ");
+    fgets(string, sizeof(string), stdin);
+    string[strcspn(string, "\n")] = '\0'; // Remove newline from fgets input
+
+    printf("Enter a substring to remove: ");
+    fgets(sub, sizeof(sub), stdin);
+    sub[strcspn(sub, "\n")] = '\0'; // Remove newline from fgets input
+
+    int minLen = minRemainingLength(string, sub);
+    printf("Minimum remaining length after removing '%s': %d\n", sub, minLen);
+
+    return 0;
+}
