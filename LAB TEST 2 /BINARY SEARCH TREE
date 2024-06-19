@@ -1,0 +1,168 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define the structure of a node in the BST
+struct TreeNode {
+    int data;
+    struct TreeNode* left;
+    struct TreeNode* right;
+};
+
+// Function to create a new node with a given data value
+struct TreeNode* createNode(int value) {
+    struct TreeNode* newNode = (struct TreeNode*)malloc(sizeof(struct TreeNode));
+    if (newNode == NULL) {
+        printf("Memory allocation failed!\n");
+        return NULL;
+    }
+    newNode->data = value;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+// Function to insert a value into the BST
+struct TreeNode* insert(struct TreeNode* root, int value) {
+    // If the tree is empty, return a new node
+    if (root == NULL)
+        return createNode(value);
+
+    // Otherwise, recur down the tree
+    if (value < root->data)
+        root->left = insert(root->left, value);
+    else if (value > root->data)
+        root->right = insert(root->right, value);
+
+    // return the (unchanged) node pointer
+    return root;
+}
+
+// Function to perform inorder traversal of the BST (used for display purposes)
+void inorderTraversal(struct TreeNode* root) {
+    if (root != NULL) {
+        inorderTraversal(root->left);
+        printf("%d ", root->data);
+        inorderTraversal(root->right);
+    }
+}
+
+// Function to search for a value in the BST
+struct TreeNode* search(struct TreeNode* root, int value) {
+    // Base Cases: root is null or value is present at the root
+    if (root == NULL || root->data == value)
+        return root;
+
+    // Value is greater than root's data
+    if (root->data < value)
+        return search(root->right, value);
+
+    // Value is smaller than root's data
+    return search(root->left, value);
+}
+
+// Function to find the minimum value node in a given BST
+struct TreeNode* minValueNode(struct TreeNode* node) {
+    struct TreeNode* current = node;
+
+    // Loop down to find the leftmost leaf
+    while (current && current->left != NULL)
+        current = current->left;
+
+    return current;
+}
+
+// Function to delete a node with a given key from the BST
+struct TreeNode* deleteNode(struct TreeNode* root, int key) {
+    // Base case
+    if (root == NULL)
+        return root;
+
+    // If the key to be deleted is smaller than the root's key, then it lies in the left subtree
+    if (key < root->data)
+        root->left = deleteNode(root->left, key);
+
+    // If the key to be deleted is greater than the root's key, then it lies in the right subtree
+    else if (key > root->data)
+        root->right = deleteNode(root->right, key);
+
+    // If key is same as root's key, then this is the node to be deleted
+    else {
+        // Node with only one child or no child
+        if (root->left == NULL) {
+            struct TreeNode* temp = root->right;
+            free(root);
+            return temp;
+        }
+        else if (root->right == NULL) {
+            struct TreeNode* temp = root->left;
+            free(root);
+            return temp;
+        }
+
+        // Node with two children: Get the inorder successor (smallest in the right subtree)
+        struct TreeNode* temp = minValueNode(root->right);
+
+        // Copy the inorder successor's content to this node
+        root->data = temp->data;
+
+        // Delete the inorder successor
+        root->right = deleteNode(root->right, temp->data);
+    }
+    return root;
+}
+
+// Function to deallocate memory of the tree nodes
+void freeTree(struct TreeNode* root) {
+    if (root != NULL) {
+        freeTree(root->left);
+        freeTree(root->right);
+        free(root);
+    }
+}
+
+// Main function for testing the BST operations
+int main() {
+    struct TreeNode* root = NULL;
+    root = insert(root, 50);
+    insert(root, 30);
+    insert(root, 20);
+    insert(root, 40);
+    insert(root, 70);
+    insert(root, 60);
+    insert(root, 80);
+
+    printf("Inorder traversal of the BST: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    int key = 50;
+    struct TreeNode* result = search(root, key);
+    if (result)
+        printf("%d found in the BST.\n", key);
+    else
+        printf("%d not found in the BST.\n", key);
+
+    key = 90;
+    result = search(root, key);
+    if (result)
+        printf("%d found in the BST.\n", key);
+    else
+        printf("%d not found in the BST.\n", key);
+
+    printf("Deleting 20 from the BST...\n");
+    root = deleteNode(root, 20);
+    printf("Inorder traversal after deletion: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    printf("Deleting 30 from the BST...\n");
+    root = deleteNode(root, 30);
+    printf("Inorder traversal after deletion: ");
+    inorderTraversal(root);
+    printf("\n");
+
+    // Free memory allocated for the BST
+    freeTree(root);
+
+    return 0;
+}
