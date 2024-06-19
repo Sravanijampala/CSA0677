@@ -1,0 +1,115 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Structure to represent a node in the Huffman tree
+typedef struct Node {
+    char symbol;
+    int frequency;
+    struct Node* left;
+    struct Node* right;
+} Node;
+
+// Function to create a new node
+Node* createNode(char symbol, int frequency) {
+    Node* node = (Node*)malloc(sizeof(Node));
+    node->symbol = symbol;
+    node->frequency = frequency;
+    node->left = NULL;
+    node->right = NULL;
+    return node;
+}
+
+// Function to compare two nodes based on their frequencies
+int compareNodes(const void* a, const void* b) {
+    Node* node1 = (Node*)a;
+    Node* node2 = (Node*)b;
+    return node1->frequency - node2->frequency;
+}
+
+// Function to build the Huffman tree
+Node* buildHuffmanTree(Node** nodes, int numNodes) {
+    // Create a priority queue to store the nodes
+    Node** queue = (Node*)malloc(numNodes * sizeof(Node));
+    for (int i = 0; i < numNodes; i++) {
+        queue[i] = nodes[i];
+    }
+
+    // Build the Huffman tree
+    while (numNodes > 1) {
+        // Extract the two nodes with the lowest frequencies
+        Node* node1 = queue[0];
+        Node* node2 = queue[1];
+
+        // Create a new internal node with the sum of the frequencies
+        Node* internalNode = createNode('\0', node1->frequency + node2->frequency);
+        internalNode->left = node1;
+        internalNode->right = node2;
+
+        // Remove the two nodes from the queue
+        for (int i = 0; i < numNodes - 1; i++) {
+            queue[i] = queue[i + 1];
+        }
+        numNodes--;
+
+        // Insert the internal node into the queue
+        for (int i = 0; i < numNodes; i++) {
+            if (queue[i]->frequency > internalNode->frequency) {
+                for (int j = numNodes; j > i; j--) {
+                    queue[j] = queue[j - 1];
+                }
+                queue[i] = internalNode;
+                break;
+            }
+        }
+    }
+
+    // Return the root of the Huffman tree
+    return queue[0];
+}
+
+// Function to generate the Huffman codes
+void generateHuffmanCodes(Node* root, char* code, int codeLength) {
+    if (root == NULL) {
+        return;
+    }
+
+    if (root->symbol!= '\0') {
+        printf("Symbol: %c, Code: ", root->symbol);
+        for (int i = 0; i < codeLength; i++) {
+            printf("%c", code[i]);
+        }
+        printf("\n");
+    }
+
+    char leftCode[codeLength + 1];
+    char rightCode[codeLength + 1];
+    strcpy(leftCode, code);
+    strcpy(rightCode, code);
+    leftCode[codeLength] = '0';
+    rightCode[codeLength] = '1';
+
+    generateHuffmanCodes(root->left, leftCode, codeLength + 1);
+    generateHuffmanCodes(root->right, rightCode, codeLength + 1);
+}
+
+int main() {
+    // Example usage:
+    char symbols[] = {'a', 'b', 'c', 'd', 'e', 'f'};
+    int frequencies[] = {5, 3, 2, 7, 1, 4};
+    int numSymbols = sizeof(symbols) / sizeof(symbols[0]);
+
+    Node** nodes = (Node*)malloc(numSymbols * sizeof(Node));
+    for (int i = 0; i < numSymbols; i++) {
+        nodes[i] = createNode(symbols[i], frequencies[i]);
+    }
+
+    qsort(nodes, numSymbols, sizeof(Node*), compareNodes);
+
+    Node* root = buildHuffmanTree(nodes, numSymbols);
+
+    char code[256];
+    generateHuffmanCodes(root, code, 0);
+
+    return 0;
+}
