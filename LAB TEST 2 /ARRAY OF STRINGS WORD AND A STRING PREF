@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+
+// Function to count strings in words that contain pref as a prefix
+int countPrefix(char* words[], int wordsSize, char* pref) {
+    int count = 0;
+    
+    for (int i = 0; i < wordsSize; ++i) {
+        // Check if pref is a prefix of words[i]
+        if (strncmp(words[i], pref, strlen(pref)) == 0) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main() {
+    // Example input
+    char* words[] = {"pay", "attention", "practice", "attend"};
+    int wordsSize = sizeof(words) / sizeof(words[0]);
+    char* pref = "at";
+    
+    // Count strings in words that contain pref as a prefix
+    int result = countPrefix(words, wordsSize, pref);
+    
+    // Print the result
+    printf("Output: %d\n", result); // Output: 2
+    
+    return 0;
+}
