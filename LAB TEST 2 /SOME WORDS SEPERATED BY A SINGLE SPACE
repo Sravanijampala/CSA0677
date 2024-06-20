@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <string.h>
+
+int isPrefix(char *word, char *prefix) {
+    return strncmp(word, prefix, strlen(prefix)) == 0;
+}
+
+int isPrefixOfWord(char *sentence, char *searchWord) {
+    int index = 1; // Initialize index of words in sentence (1-indexed)
+    char *token = strtok(sentence, " "); // Split sentence into words
+    
+    while (token != NULL) {
+        if (isPrefix(token, searchWord)) {
+            return index; // Found the prefix, return the 1-indexed position
+        }
+        token = strtok(NULL, " "); // Move to the next word
+        index++;
+    }
+    
+    return -1; // If no match found
+}
+
+int main() {
+    char sentence[] = "i love eating burger";
+    char searchWord[] = "burg";
+    
+    int result = isPrefixOfWord(sentence, searchWord);
+    
+    printf("Output: %d\n", result); // Output: 4
+    
+    return 0;
+}
