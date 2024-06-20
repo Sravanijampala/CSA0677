@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definition of hash set (can be implemented using an array or other data structures)
+typedef struct {
+    int keys[1001]; // Assuming the range of nums[i] is from 0 to 1000
+} HashSet;
+
+void initHashSet(HashSet *set) {
+    for (int i = 0; i <= 1000; ++i) {
+        set->keys[i] = 0;
+    }
+}
+
+void addToHashSet(HashSet *set, int key) {
+    set->keys[key] = 1;
+}
+
+int isInHashSet(HashSet *set, int key) {
+    return set->keys[key];
+}
+
+int* intersection(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize) {
+    HashSet set;
+    initHashSet(&set);
+    HashSet intersectionSet;
+    initHashSet(&intersectionSet);
+    
+    // Add all elements of nums1 to the set
+    for (int i = 0; i < nums1Size; ++i) {
+        addToHashSet(&set, nums1[i]);
+    }
+    
+    // Find intersection of nums2 with set
+    for (int i = 0; i < nums2Size; ++i) {
+        if (isInHashSet(&set, nums2[i]) && !isInHashSet(&intersectionSet, nums2[i])) {
+            addToHashSet(&intersectionSet, nums2[i]);
+        }
+    }
+    
+    // Convert intersectionSet to result array
+    *returnSize = 0;
+    int* result = (int*)malloc(sizeof(int) * 1000); // Assuming max size is 1000
+    for (int i = 0; i <= 1000; ++i) {
+        if (intersectionSet.keys[i] == 1) {
+            result[*returnSize] = i;
+            (*returnSize)++;
+        }
+    }
+    
+    return result;
+}
+
+int main() {
+    int nums1[] = {1, 2, 2, 1};
+    int nums1Size = sizeof(nums1) / sizeof(nums1[0]);
+    int nums2[] = {2, 2};
+    int nums2Size = sizeof(nums2) / sizeof(nums2[0]);
+    
+    int returnSize;
+    int* result = intersection(nums1, nums1Size, nums2, nums2Size, &returnSize);
+    
+    // Print the result array
+    printf("Output:\n");
+    printf("[");
+    for (int i = 0; i < returnSize; ++i) {
+        printf("%d", result[i]);
+        if (i < returnSize - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+    
+    // Free dynamically allocated memory
+    free(result);
+    
+    return 0;
+}
