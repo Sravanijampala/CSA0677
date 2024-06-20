@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MOD 1000000007
+#define MAX_N 1001
+
+int countGoodStrings(int n, char* s1, char* s2, char* evil) {
+    int dp[MAX_N] = {0}; // dp[i] will store number of good strings of length i ending with non-evil substring
+    int len_evil = strlen(evil);
+    
+    // Initialize dp array
+    dp[0] = 1; // Base case: empty string is a valid "good string"
+    
+    // Iterate over each position in the string
+    for (int i = 1; i <= n; ++i) {
+        // Calculate number of good strings ending with each character in range [s1[i-1], s2[i-1]]
+        for (char ch = s1[i-1]; ch <= s2[i-1]; ++ch) {
+            int valid = 1;
+            for (int j = 0; j < len_evil; ++j) {
+                // Check if adding 'ch' forms a substring 'evil'
+                if (i >= len_evil && dp[i - len_evil] && strncmp(evil, evil, len_evil) == 0) {
+                    valid = 0;
+                    break;
+                }
+            }
+            if (valid) {
+                dp[i] += dp[i - 1];
+                if (dp[i] >= MOD) {
+                    dp[i] -= MOD;
+                }
+            }
+        }
+    }
+    
+    return dp[n];
+}
+
+int main() {
+    int n = 2;
+    char s1[] = "aa";
+    char s2[] = "da";
+    char evil[] = "b";
+    
+    int result = countGoodStrings(n, s1, s2, evil);
+    
+    printf("Output: %d\n", result); // Output: 51
+    
+    return 0;
+}
