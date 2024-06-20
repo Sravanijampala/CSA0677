@@ -1,0 +1,62 @@
+#include <stdio.h>
+
+void transpose(int matrix[1000][1000], int matrixSize, int* matrixColSize, int transposeMatrix[1000][1000]) {
+    int m = matrixSize; // number of rows
+    int n = *matrixColSize; // number of columns
+    
+    // Calculate transpose matrix
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            transposeMatrix[j][i] = matrix[i][j];
+        }
+    }
+}
+
+int main() {
+    int matrix1[3][3] = {
+        {1, 2, 3},
+        {4, 5, 6},
+        {7, 8, 9}
+    };
+    int matrix1Size = 3;
+    int matrix1ColSize = 3;
+    
+    int transposeMatrix1[3][3]; // Resultant transpose matrix
+    
+    // Calculate transpose of matrix1
+    transpose(matrix1, matrix1Size, &matrix1ColSize, transposeMatrix1);
+    
+    // Print the transpose matrix1
+    printf("Transpose of matrix1:\n");
+    for (int i = 0; i < matrix1ColSize; ++i) {
+        for (int j = 0; j < matrix1Size; ++j) {
+            printf("%d ", transposeMatrix1[i][j]);
+        }
+        printf("\n");
+    }
+    
+    printf("\n");
+    
+    int matrix2[2][3] = {
+        {1, 2, 3},
+        {4, 5, 6}
+    };
+    int matrix2Size = 2;
+    int matrix2ColSize = 3;
+    
+    int transposeMatrix2[3][2]; // Resultant transpose matrix
+    
+    // Calculate transpose of matrix2
+    transpose(matrix2, matrix2Size, &matrix2ColSize, transposeMatrix2);
+    
+    // Print the transpose matrix2
+    printf("Transpose of matrix2:\n");
+    for (int i = 0; i < matrix2ColSize; ++i) {
+        for (int j = 0; j < matrix2Size; ++j) {
+            printf("%d ", transposeMatrix2[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}
