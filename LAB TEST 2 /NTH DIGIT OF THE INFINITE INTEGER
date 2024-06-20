@@ -1,0 +1,32 @@
+#include <stdio.h>
+
+int findNthDigit(int n) {
+    long digit_count = 9; // Number of digits contributed by numbers of different lengths
+    long len = 1; // Length of numbers (1-digit, 2-digit, 3-digit, etc.)
+    long start = 1; // Starting number of current length
+    
+    // Find the range that contains the nth digit
+    while (n > len * digit_count) {
+        n -= len * digit_count;
+        len++;
+        digit_count *= 10;
+        start *= 10;
+    }
+    
+    // Find the actual number that contains the nth digit
+    start += (n - 1) / len;
+    
+    // Find the nth digit within the found number
+    int digit_position = (n - 1) % len;
+    return (start / (int)pow(10, len - 1 - digit_position)) % 10;
+}
+
+int main() {
+    int n1 = 3;
+    int n2 = 11;
+    
+    printf("Output for n = %d: %d\n", n1, findNthDigit(n1)); // Output: 3
+    printf("Output for n = %d: %d\n", n2, findNthDigit(n2)); // Output: 0
+    
+    return 0;
+}
