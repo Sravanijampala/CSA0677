@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to perform binary search to find the smallest element in arr2 greater than key
+int binary_search(int arr2[], int size, int key) {
+    int low = 0, high = size - 1;
+    int result = -1; // Initialize result to -1 (if no element found)
+    
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        
+        if (arr2[mid] > key) {
+            result = mid; // Update result and search in the left half
+            high = mid - 1;
+        } else {
+            low = mid + 1; // Search in the right half
+        }
+    }
+    
+    return result;
+}
+
+int min_operations(int* arr1, int arr1Size, int* arr2, int arr2Size) {
+    // Sort arr2 to use binary search efficiently
+    qsort(arr2, arr2Size, sizeof(int), compare);
+
+    // Initialize dp array to store minimum operations
+    int dp[arr1Size];
+    dp[0] = 0; // No operations needed for the first element
+    
+    // Traverse arr1 and compute dp array
+    for (int i = 1; i < arr1Size; ++i) {
+        dp[i] = arr1[i-1] < arr1[i] ? dp[i-1] : INT_MAX; // Initialize with large number
+        
+        // Find the smallest element in arr2 that can replace arr1[i]
+        int idx = binary_search(arr2, arr2Size, arr1[i-1]);
+        if (idx != -1) {
+            dp[i] = dp[i-1] + 1; // Update dp[i] if a valid replacement is found
+        }
+        
+        // If dp[i] is still INT_MAX, no valid replacement found, return -1
+        if (dp[i] == INT_MAX) {
+            return -1;
+        }
+    }
+    
+    return dp[arr1Size - 1];
+}
+
+// Comparison function for qsort
+int compare(const void* a, const void* b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int main() {
+    // Example usage
+    int arr1[] = {1, 5, 3, 6, 7};
+    int arr2[] = {1, 3, 2, 4};
+    
+    int arr1Size = sizeof(arr1) / sizeof(arr1[0]);
+    int arr2Size = sizeof(arr2) / sizeof(arr2[0]);
+    
+    int result = min_operations(arr1, arr1Size, arr2, arr2Size);
+    
+    printf("Minimum operations required: %d\n", result);
+    
+    return 0;
+}
