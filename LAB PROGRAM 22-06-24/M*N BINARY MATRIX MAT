@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_SIZE 100
+
+// Structure to store coordinates
+typedef struct {
+    int row;
+    int col;
+} Coordinate;
+
+// Queue structure for BFS
+typedef struct {
+    Coordinate items[MAX_SIZE];
+    int front;
+    int rear;
+} Queue;
+
+// Function prototypes
+void enqueue(Queue *q, Coordinate coord);
+Coordinate dequeue(Queue *q);
+bool is_empty(Queue *q);
+bool is_valid(int row, int col, int m, int n);
+void update_distances(int** mat, int m, int n, int** result);
+
+int** updateMatrix(int** mat, int matSize, int* matColSize, int* returnSize, int** returnColumnSizes) {
+    // Matrix dimensions
+    int m = matSize;
+    int n = *matColSize;
+
+    // Allocate memory for the result matrix
+    int** result = (int**)malloc(sizeof(int*) * m);
+    for (int i = 0; i < m; ++i) {
+        result[i] = (int*)malloc(sizeof(int) * n);
+    }
+
+    // Initialize the queue for BFS
+    Queue q;
+    q.front = -1;
+    q.rear = -1;
+
+    // Initialize result matrix with max possible distance (infinity)
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            result[i][j] = 1000000; // A large number to represent infinity
+        }
+    }
+
+    // Update distances for cells with '0' and enqueue them
+    update_distances(mat, m, n, result);
+
+    // Return the result
+    *returnSize = m;
+    *returnColumnSizes = (int*)malloc(sizeof(int) * m);
+    for (int i = 0; i < m; ++i) {
+        (*returnColumnSizes)[i] = n;
+    }
+
+    return result;
+}
+
+void update_distances(int** mat, int m, int n, int** result) {
+    // Initialize the queue for BFS
+    Queue q;
+    q.front = -1;
+    q.rear = -1;
+
+    // Enqueue all cells with '0' and mark distance as 0
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (mat[i][j] == 0) {
+                Coordinate coord = {i, j};
+                enqueue(&q, coord);
+                result[i][j] = 0;
+            }
+        }
+    }
+
+    // Arrays for directions (up, down, left, right)
+    int directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    // Perform BFS
+    while (!is_empty(&q)) {
+        Coordinate current = dequeue(&q);
+
+        // Explore neighbors in all 4 directions
+        for (int d = 0; d < 4; ++d) {
+            int new_row = current.row + directions[d][0];
+            int new_col = current.col + directions[d][1];
+
+            // Check if new coordinates are valid
+            if (is_valid(new_row, new_col, m, n)) {
+                // Check if the distance can be updated
+                if (result[new_row][new_col] > result[current.row][current.col] + 1) {
+                    result[new_row][new_col] = result[current.row][current.col] + 1;
+                    Coordinate new_coord = {new_row, new_col};
+                    enqueue(&q, new_coord);
+                }
+            }
+        }
+    }
+}
+
+void enqueue(Queue *q, Coordinate coord) {
+    if (q->front == -1) {
+        q->front = 0;
+    }
+    q->rear++;
+    q->items[q->rear] = coord;
+}
+
+Coordinate dequeue(Queue *q) {
+    Coordinate item = q->items[q->front];
+    q->front++;
+    if (q->front > q->rear) {
+        q->front = -1;
+        q->rear = -1;
+    }
+    return item;
+}
+
+bool is_empty(Queue *q) {
+    return q->front == -1;
+}
+
+bool is_valid(int row, int col, int m, int n) {
+    return row >= 0 && row < m && col >= 0 && col < n;
+}
