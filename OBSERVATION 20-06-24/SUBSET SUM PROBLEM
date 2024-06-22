@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+// Function to solve the Subset Sum problem using dynamic programming
+bool subsetSum(int nums[], int n, int target) {
+    // dp[i] will be true if there is a subset of nums[] with sum equal to i
+    bool dp[target + 1];
+    memset(dp, false, sizeof(dp));
+    
+    // There is always a subset with sum 0 (the empty subset)
+    dp[0] = true;
+    
+    // Process all elements of nums[]
+    for (int i = 0; i < n; i++) {
+        // Traverse dp array from target to nums[i] to avoid overwriting results
+        for (int j = target; j >= nums[i]; j--) {
+            if (dp[j - nums[i]]) {
+                dp[j] = true;
+            }
+        }
+    }
+    
+    // Return the value of dp[target], which indicates whether a subset with sum target exists
+    return dp[target];
+}
+
+int main() {
+    int nums[] = {3, 34, 4, 12, 5, 2};
+    int n = sizeof(nums) / sizeof(nums[0]);
+    int target = 9;
+
+    if (subsetSum(nums, n, target)) {
+        printf("There exists a subset with sum %d\n", target);
+    } else {
+        printf("No subset with sum %d exists\n", target);
+    }
+
+    return 0;
+}
