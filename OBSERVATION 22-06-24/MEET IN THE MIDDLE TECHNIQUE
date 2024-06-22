@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAXN 20 // Maximum number of elements in the array
+
+// Function to generate all subsets and calculate their sums
+void generateSubsets(int arr[], int n, long long subsetSums[]) {
+    int totalSubsets = 1 << n; // Total number of subsets (2^n)
+    for (int i = 0; i < totalSubsets; i++) {
+        long long sum = 0;
+        for (int j = 0; j < n; j++) {
+            if (i & (1 << j)) {
+                sum += arr[j];
+            }
+        }
+        subsetSums[i] = sum;
+    }
+}
+
+// Function to count how many subsets have a sum equal to targetSum
+int countSubsetsWithSum(long long subsetSums[], int subsetCount, long long targetSum) {
+    int count = 0;
+    for (int i = 0; i < subsetCount; i++) {
+        if (subsetSums[i] == targetSum) {
+            count++;
+        }
+    }
+    return count;
+}
+
+// Comparator function for sorting
+int compare(const void* a, const void* b) {
+    return (*(long long*)a - *(long long*)b);
+}
+
+// Meet in the middle technique
+int meetInTheMiddle(int arr[], int n, long long targetSum) {
+    // Divide the array into two halves
+    int n1 = n / 2;
+    int n2 = n - n1;
+
+    // Arrays to store subset sums
+    long long subsetSums1[1 << n1];
+    long long subsetSums2[1 << n2];
+
+    // Generate subset sums for each half
+    generateSubsets(arr, n1, subsetSums1);
+    generateSubsets(arr + n1, n2, subsetSums2);
+
+    // Sort subsetSums2 for binary search
+    qsort(subsetSums2, 1 << n2, sizeof(long long), compare);
+
+    // Count valid combinations
+    int count = 0;
+    for (int i = 0; i < (1 << n1); i++) {
+        long long needed = targetSum - subsetSums1[i];
+        // Binary search for needed in subsetSums2
+        int low = 0, high = (1 << n2) - 1;
+        while (low <= high) {
+            int mid = (low + high) / 2;
+            if (subsetSums2[mid] == needed) {
+                // Found a match
+                count++;
+                // Count all equal to needed
+                int left = mid - 1, right = mid + 1;
+                while (left >= 0 && subsetSums2[left] == needed) {
+                    count++;
+                    left--;
+                }
+                while (right < (1 << n2) && subsetSums2[right] == needed) {
+                    count++;
+                    right++;
+                }
+                break;
+            } else if (subsetSums2[mid] < needed) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int n; // Number of elements in the array
+    long long targetSum; // Target sum
+    int arr[MAXN]; // Array of integers
+
+    // Input number of elements
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    // Input array elements
+    printf("Enter the elements of the array:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Input target sum
+    printf("Enter the target sum: ");
+    scanf("%lld", &targetSum);
+
+    // Calculate and print the number of subsets with sum equal to targetSum
+    int count = meetInTheMiddle(arr, n, targetSum);
+    printf("Number of subsets with sum equal to %lld is %d\n", targetSum, count);
+
+    return 0;
+}
