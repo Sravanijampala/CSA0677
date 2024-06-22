@@ -1,0 +1,28 @@
+#include <stdio.h>
+
+int missingNumber(int* nums, int numsSize) {
+    int missing = 0;
+    
+    // XOR all numbers from 1 to n
+    for (int i = 1; i <= numsSize; ++i) {
+        missing ^= i;
+    }
+    
+    // XOR all numbers in nums
+    for (int i = 0; i < numsSize; ++i) {
+        missing ^= nums[i];
+    }
+    
+    return missing;
+}
+
+int main() {
+    // Example usage
+    int nums[] = {3, 0, 1};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    
+    int result = missingNumber(nums, numsSize);
+    printf("The missing number is: %d\n", result);
+    
+    return 0;
+}
