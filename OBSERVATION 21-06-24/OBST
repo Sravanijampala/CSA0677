@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_KEYS 10
+
+// Function to calculate optimal binary search tree cost
+void optimalBST(float keys[], float freq[], int n) {
+    // cost[i][j] will store the minimum cost of searching keys from i to j
+    float cost[MAX_KEYS][MAX_KEYS];
+    
+    // Initialize all costs as 0
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            cost[i][j] = 0;
+        }
+    }
+
+    // Initialize cost for single keys
+    for (int i = 0; i < n; i++) {
+        cost[i][i] = freq[i];
+    }
+
+    // Build the table cost[][] in bottom-up manner
+    for (int L = 2; L <= n; L++) { // L is chain length
+        for (int i = 0; i <= n - L + 1; i++) {
+            int j = i + L - 1;
+            cost[i][j] = INT_MAX;
+
+            // Try making all keys in keys[i..j] as root
+            for (int r = i; r <= j; r++) {
+                // c = cost when keys[r] becomes root of this subtree
+                float c = ((r > i) ? cost[i][r - 1] : 0) +
+                          ((r < j) ? cost[r + 1][j] : 0) + sum(freq, i, j);
+                if (c < cost[i][j]) {
+                    cost[i][j] = c;
+                }
+            }
+        }
+    }
+
+    printf("Optimal Cost of BST is %.2f\n", cost[0][n - 1]);
+}
+
+// Function to calculate sum of probabilities in a given range
+float sum(float freq[], int i, int j) {
+    float s = 0;
+    for (int k = i; k <= j; k++) {
+        s += freq[k];
+    }
+    return s;
+}
+
+int main() {
+    float keys[MAX_KEYS] = {10, 12, 20, 25};
+    float freq[MAX_KEYS] = {4, 2, 6, 3};
+    int n = sizeof(keys) / sizeof(keys[0]);
+
+    optimalBST(keys, freq, n);
+
+    return 0;
+}
