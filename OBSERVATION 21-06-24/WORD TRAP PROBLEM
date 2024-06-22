@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+#define ROW 3
+#define COL 3
+#define DICT_SIZE 5
+
+// Dictionary of words
+char* dictionary[DICT_SIZE] = {"at", "ate", "tea", "toe", "pot"};
+
+// A utility function to check if a given cell (row, col) can be included in the current path
+bool isSafe(int row, int col, bool visited[ROW][COL]) {
+    return (row >= 0) && (row < ROW) &&
+           (col >= 0) && (col < COL) &&
+           !visited[row][col];
+}
+
+// A recursive function to find all words present in the grid starting from (row, col)
+void searchWord(char grid[ROW][COL], int row, int col, bool visited[ROW][COL], char* word) {
+    // Mark the current cell as visited
+    visited[row][col] = true;
+
+    // Append current character to the word being formed
+    int len = strlen(word);
+    word[len] = grid[row][col];
+    word[len + 1] = '\0';
+
+    // Check if the formed word exists in the dictionary
+    for (int i = 0; i < DICT_SIZE; i++) {
+        if (strcmp(word, dictionary[i]) == 0) {
+            printf("%s\n", word);
+            break;
+        }
+    }
+
+    // Move to all 8 adjacent cells of grid[row][col]
+    for (int r = row - 1; r <= row + 1; r++) {
+        for (int c = col - 1; c <= col + 1; c++) {
+            if (isSafe(r, c, visited)) {
+                searchWord(grid, r, c, visited, word);
+            }
+        }
+    }
+
+    // Backtrack: Remove current character from the word and mark cell as unvisited
+    visited[row][col] = false;
+    word[len] = '\0';
+}
+
+// Function to search for all words in the grid
+void findWords(char grid[ROW][COL]) {
+    bool visited[ROW][COL];
+    memset(visited, false, sizeof(visited));
+
+    // Initialize the word as an empty string
+    char word[ROW * COL + 1];
+    word[0] = '\0';
+
+    // Consider every character in the grid and search for words
+    for (int row = 0; row < ROW; row++) {
+        for (int col = 0; col < COL; col++) {
+            searchWord(grid, row, col, visited, word);
+        }
+    }
+}
+
+int main() {
+    char grid[ROW][COL] = {{'a', 't', 'e'},
+                           {'p', 'o', 't'},
+                           {'t', 'o', 'e'}};
+
+    printf("Following words in the grid:\n");
+    findWords(grid);
+
+    return 0;
+}
