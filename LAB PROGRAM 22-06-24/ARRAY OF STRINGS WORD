@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <string.h>
+
+int countPrefix(char** words, int wordsSize, char* pref) {
+    int count = 0;
+    
+    for (int i = 0; i < wordsSize; ++i) {
+        if (strncmp(words[i], pref, strlen(pref)) == 0) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
+int main() {
+    char *words[] = {"pay", "attention", "practice", "attend"};
+    int wordsSize = sizeof(words) / sizeof(words[0]);
+    char *pref = "at";
+    
+    int result = countPrefix(words, wordsSize, pref);
+    printf("Number of strings containing prefix \"%s\": %d\n", pref, result);
+    
+    return 0;
+}
