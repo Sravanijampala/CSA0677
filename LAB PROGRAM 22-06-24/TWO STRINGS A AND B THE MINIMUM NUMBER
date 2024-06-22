@@ -1,0 +1,47 @@
+#include <stdio.h>
+#include <string.h>
+
+int repeatedStringMatch(char *a, char *b) {
+    int len_a = strlen(a);
+    int len_b = strlen(b);
+    
+    // Create a buffer to hold enough repeated string a
+    char buffer[len_a * 2 + len_b + 1]; // +1 for null terminator
+    
+    int count = 0;
+    strcpy(buffer, "");
+    
+    // Repeat string a until it covers enough length
+    while (strlen(buffer) < len_b + len_a) {
+        strcat(buffer, a);
+        count++;
+    }
+    
+    // Check if b is a substring of buffer
+    char *ptr = strstr(buffer, b);
+    
+    if (ptr != NULL) {
+        return count;
+    } else {
+        // If not found, check one more concatenation
+        strcat(buffer, a);
+        count++;
+        ptr = strstr(buffer, b);
+        if (ptr != NULL) {
+            return count;
+        } else {
+            return -1;
+        }
+    }
+}
+
+int main() {
+    // Example usage
+    char a[] = "abcd";
+    char b[] = "cdabcdab";
+    
+    int result = repeatedStringMatch(a, b);
+    printf("Minimum number of times to repeat a: %d\n", result);
+    
+    return 0;
+}
