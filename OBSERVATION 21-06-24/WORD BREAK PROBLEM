@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdbool.h>
+#include <string.h>
+
+// Function to check if a string can be segmented into space-separated
+// sequence of one or more dictionary words
+bool wordBreak(char* str, char* dictionary[], int dictSize) {
+    int n = strlen(str);
+
+    // Create a DP array to store results of subproblems.
+    // dp[i] is true if str[0..i-1] can be segmented into dictionary words,
+    // otherwise false.
+    bool dp[n + 1];
+    memset(dp, false, sizeof(dp)); // Initialize all values as false.
+
+    // dp[0] is true (empty string)
+    dp[0] = true;
+
+    // Fill dp[] in bottom-up manner
+    for (int i = 1; i <= n; i++) {
+        // If dp[i] is false, then check if current prefix can make it true
+        for (int j = 0; j < i; j++) {
+            if (dp[j] && dictionaryContains(str + j, i - j, dictionary, dictSize)) {
+                dp[i] = true;
+                break;
+            }
+        }
+    }
+
+    // If dp[n] is true, then string can be segmented, otherwise not.
+    return dp[n];
+}
+
+// Function to check if a substring is present in the dictionary
+bool dictionaryContains(char* str, int len, char* dictionary[], int dictSize) {
+    for (int i = 0; i < dictSize; i++) {
+        if (strlen(dictionary[i]) == len && strncmp(dictionary[i], str, len) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int main() {
+    char* dictionary[] = {"i", "like", "sam", "sung", "samsung", "mobile", "ice", "cream", "icecream", "man", "go", "mango"};
+    int dictSize = sizeof(dictionary) / sizeof(dictionary[0]);
+
+    char str[] = "ilike";
+    if (wordBreak(str, dictionary, dictSize)) {
+        printf("String can be segmented\n");
+    } else {
+        printf("String cannot be segmented\n");
+    }
+
+    char str2[] = "ilikesamsung";
+    if (wordBreak(str2, dictionary, dictSize)) {
+        printf("String can be segmented\n");
+    } else {
+        printf("String cannot be segmented\n");
+    }
+
+    return 0;
+}
