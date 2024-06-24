@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MOD 1000000007
+
+// Function to check if string 's' contains substring 'evil'
+int containsEvil(char *s, char *evil) {
+    int m = strlen(s);
+    int n = strlen(evil);
+    
+    for (int i = 0; i <= m - n; ++i) {
+        int j;
+        for (j = 0; j < n; ++j) {
+            if (s[i + j] != evil[j])
+                break;
+        }
+        if (j == n) // Found evil as a substring
+            return 1;
+    }
+    return 0;
+}
+
+// Function to calculate power modulo
+long long powerMod(long long base, long long exp, long long mod) {
+    if (exp == 0) return 1;
+    long long half = powerMod(base, exp / 2, mod);
+    long long halfSquared = (half * half) % mod;
+    if (exp % 2 == 1) return (halfSquared * base) % mod;
+    return halfSquared;
+}
+
+int countGoodStrings(int n, char *s1, char *s2, char *evil) {
+    int count = 0;
+    int mod = MOD;
+    int evilLen = strlen(evil);
+    
+    // Iterate through all possible strings of length n
+    char current[n + 1];
+    current[n] = '\0'; // Null-terminate the string
+    
+    for (int i = 0; i < n; ++i)
+        current[i] = 'a';
+    
+    int i = 0;
+    while (1) {
+        // Check if current string is within range [s1, s2]
+        if (strcmp(current, s1) >= 0 && strcmp(current, s2) <= 0) {
+            // Check if current string contains evil as substring
+            if (!containsEvil(current, evil)) {
+                count++;
+                count %= mod; // Apply modulo to prevent overflow
+            }
+        }
+        
+        // Generate the next string lexicographically
+        i = n - 1;
+        while (i >= 0 && current[i] == 'z')
+            i--;
+        
+        if (i < 0)
+            break; // All strings generated
+        
+        current[i]++;
+        for (int j = i + 1; j < n; ++j)
+            current[j] = 'a';
+    }
+    
+    return count;
+}
+
+int main() {
+    int n = 2;
+    char s1[] = "aa";
+    char s2[] = "da";
+    char evil[] = "b";
+    
+    int result = countGoodStrings(n, s1, s2, evil);
+    printf("Output: %d\n", result);
+    
+    return 0;
+}
