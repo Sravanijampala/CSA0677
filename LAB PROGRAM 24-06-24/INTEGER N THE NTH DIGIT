@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Function to transpose a matrix
+void transpose(int **matrix, int m, int n) {
+    int **transpose = (int **)malloc(n * sizeof(int *));
+    for (int i = 0; i < n; ++i) {
+        transpose[i] = (int *)malloc(m * sizeof(int));
+    }
+    
+    // Fill the transpose matrix
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            transpose[j][i] = matrix[i][j];
+        }
+    }
+    
+    // Print the transpose matrix
+    printf("Transposed Matrix:\n");
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < m; ++j) {
+            printf("%d ", transpose[i][j]);
+        }
+        printf("\n");
+    }
+    
+    // Free dynamically allocated memory
+    for (int i = 0; i < n; ++i) {
+        free(transpose[i]);
+    }
+    free(transpose);
+}
+
+int main() {
+    int m = 3, n = 3; // Dimensions of the matrix
+    
+    // Input matrix
+    int **matrix = (int **)malloc(m * sizeof(int *));
+    for (int i = 0; i < m; ++i) {
+        matrix[i] = (int *)malloc(n * sizeof(int));
+    }
+    
+    // Example input matrix
+    int count = 1;
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            matrix[i][j] = count++;
+        }
+    }
+    
+    // Print original matrix
+    printf("Original Matrix:\n");
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+    
+    // Transpose the matrix
+    transpose(matrix, m, n);
+    
+    // Free dynamically allocated memory
+    for (int i = 0; i < m; ++i) {
+        free(matrix[i]);
+    }
+    free(matrix);
+    
+    return 0;
+}
