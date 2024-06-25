@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Helper function for binary search to find the smallest element in arr2 greater than target
+int binarySearch(int* arr2, int size, int target) {
+    int left = 0, right = size - 1;
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        if (arr2[mid] > target) {
+            right = mid - 1;
+        } else {
+            left = mid + 1;
+        }
+    }
+    // After the loop, 'left' is the index of the smallest element > target
+    return left;
+}
+
+int minOperations(int* arr1, int arr1Size, int* arr2, int arr2Size) {
+    // Initialize dp array
+    int dp[arr1Size];
+    dp[0] = 0;
+    
+    for (int i = 1; i < arr1Size; ++i) {
+        dp[i] = arr1[i] > arr1[i - 1] ? dp[i - 1] : arr1Size; // Initialize dp[i] to a large value arr1Size if not strictly increasing
+        if (arr1[i] <= arr1[i - 1]) {
+            int idx = binarySearch(arr2, arr2Size, arr1[i - 1]);
+            if (idx < arr2Size && arr2[idx] > arr1[i - 1]) {
+                arr1[i] = arr2[idx];
+                dp[i] = dp[i - 1] + 1;
+            }
+        }
+    }
+    
+    return dp[arr1Size - 1] >= arr1Size ? -1 : dp[arr1Size - 1];
+}
+
+// Example usage
+int main() {
+    int arr1[] = {1, 5, 3, 6, 7};
+    int arr2[] = {1, 3, 2, 4};
+    int arr1Size = 5;
+    int arr2Size = 4;
+
+    int result = minOperations(arr1, arr1Size, arr2, arr2Size);
+    printf("Minimum number of operations: %d\n", result);
+
+    return 0;
+}
