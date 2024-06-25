@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <string.h>
+
+int repeatedStringMatch(char *a, char *b) {
+    int len_a = strlen(a);
+    int len_b = strlen(b);
+    
+    // Calculate the minimum number of times we need to repeat `a`
+    int max_repeats = len_b / len_a + 2; // at most ceil(len_b / len_a) + 1
+    
+    // Create a buffer to store the concatenated string
+    char concat[1000]; // Assuming a reasonable maximum length for demonstration
+    concat[0] = '\0'; // Initialize as empty string
+    
+    // Construct the concatenated string with maximum repeats of `a`
+    for (int i = 1; i <= max_repeats; ++i) {
+        strcat(concat, a);
+    }
+    
+    // Check if `b` is a substring of `concat`
+    if (strstr(concat, b) != NULL) {
+        return max_repeats;
+    } else {
+        return -1;
+    }
+}
+
+// Example usage
+int main() {
+    char a[] = "abcd";
+    char b[] = "cdabcdab";
+    
+    int result = repeatedStringMatch(a, b);
+    printf("Minimum number of times: %d\n", result);
+    
+    return 0;
+}
