@@ -1,0 +1,137 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_ROWS 100
+#define MAX_COLS 100
+
+// Structure to hold coordinates (row, col)
+typedef struct {
+    int row;
+    int col;
+} Coordinate;
+
+// Queue implementation for BFS
+typedef struct {
+    Coordinate items[MAX_ROWS * MAX_COLS];
+    int front;
+    int rear;
+} Queue;
+
+// Initialize the queue
+void initQueue(Queue *q) {
+    q->front = -1;
+    q->rear = -1;
+}
+
+// Check if queue is empty
+int isEmpty(Queue *q) {
+    return q->front == -1;
+}
+
+// Enqueue a coordinate into the queue
+void enqueue(Queue *q, Coordinate coord) {
+    if (q->rear == MAX_ROWS * MAX_COLS - 1) {
+        printf("Queue is full\n");
+        exit(1);
+    }
+    if (q->front == -1) {
+        q->front = 0;
+    }
+    q->rear++;
+    q->items[q->rear] = coord;
+}
+
+// Dequeue a coordinate from the queue
+Coordinate dequeue(Queue *q) {
+    if (isEmpty(q)) {
+        printf("Queue is empty\n");
+        exit(1);
+    }
+    Coordinate item = q->items[q->front];
+    if (q->front == q->rear) {
+        q->front = -1;
+        q->rear = -1;
+    } else {
+        q->front++;
+    }
+    return item;
+}
+
+// Function to perform BFS and update distances
+void updateMatrix(int mat[MAX_ROWS][MAX_COLS], int numRows, int numCols) {
+    Queue q;
+    initQueue(&q);
+
+    // Enqueue all cells with value 0 and mark them as visited (distance 0)
+    for (int r = 0; r < numRows; r++) {
+        for (int c = 0; c < numCols; c++) {
+            if (mat[r][c] == 0) {
+                Coordinate coord = {r, c};
+                enqueue(&q, coord);
+            }
+        }
+    }
+
+    // Directions for moving in four possible directions: up, down, left, right
+    int directions[4][2] = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+    // Perform BFS
+    while (!isEmpty(&q)) {
+        Coordinate curr = dequeue(&q);
+        int currRow = curr.row;
+        int currCol = curr.col;
+
+        // Explore neighbors
+        for (int d = 0; d < 4; d++) {
+            int newRow = currRow + directions[d][0];
+            int newCol = currCol + directions[d][1];
+
+            // Check if new coordinates are within bounds
+            if (newRow >= 0 && newRow < numRows && newCol >= 0 && newCol < numCols) {
+                // If the new cell has not been visited yet
+                if (mat[newRow][newCol] == -1) {
+                    // Update its distance
+                    mat[newRow][newCol] = mat[currRow][currCol] + 1;
+                    // Enqueue it for further exploration
+                    Coordinate newCoord = {newRow, newCol};
+                    enqueue(&q, newCoord);
+                }
+            }
+        }
+    }
+}
+
+// Function to print the matrix
+void printMatrix(int mat[MAX_ROWS][MAX_COLS], int numRows, int numCols) {
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            printf("%d ", mat[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Example usage
+int main() {
+    int mat[MAX_ROWS][MAX_COLS] = {{0, 0, 0}, {0, 1, 0}, {1, 1, 1}};
+    int numRows = 3;
+    int numCols = 3;
+
+    // Initialize matrix with -1 (unvisited)
+    for (int i = 0; i < numRows; i++) {
+        for (int j = 0; j < numCols; j++) {
+            if (mat[i][j] == 1) {
+                mat[i][j] = -1; // -1 represents unvisited cells
+            }
+        }
+    }
+
+    // Update distances using BFS
+    updateMatrix(mat, numRows, numCols);
+
+    // Print the updated matrix
+    printf("Updated Matrix:\n");
+    printMatrix(mat, numRows, numCols);
+
+    return 0;
+}
