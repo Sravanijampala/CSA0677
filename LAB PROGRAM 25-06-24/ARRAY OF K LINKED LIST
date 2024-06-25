@@ -1,0 +1,182 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definition for a singly-linked list node
+struct ListNode {
+    int val;
+    struct ListNode *next;
+};
+
+// Min-Heap Node structure
+struct MinHeapNode {
+    struct ListNode* node;
+    int listIndex;
+};
+
+// Min-Heap structure
+struct MinHeap {
+    struct MinHeapNode* heapArray;
+    int size;
+    int capacity;
+};
+
+// Function to create a new MinHeapNode
+struct MinHeapNode* newMinHeapNode(struct ListNode* node, int listIndex) {
+    struct MinHeapNode* minHeapNode = (struct MinHeapNode*)malloc(sizeof(struct MinHeapNode));
+    minHeapNode->node = node;
+    minHeapNode->listIndex = listIndex;
+    return minHeapNode;
+}
+
+// Function to swap two MinHeapNode pointers
+void swapMinHeapNode(struct MinHeapNode** a, struct MinHeapNode** b) {
+    struct MinHeapNode* temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+// Function to heapify the min-heap (downward operation)
+void minHeapify(struct MinHeap* minHeap, int idx) {
+    int smallest = idx;
+    int left = 2 * idx + 1;
+    int right = 2 * idx + 2;
+
+    if (left < minHeap->size && minHeap->heapArray[left].node->val < minHeap->heapArray[smallest].node->val)
+        smallest = left;
+
+    if (right < minHeap->size && minHeap->heapArray[right].node->val < minHeap->heapArray[smallest].node->val)
+        smallest = right;
+
+    if (smallest != idx) {
+        swapMinHeapNode(&minHeap->heapArray[idx], &minHeap->heapArray[smallest]);
+        minHeapify(minHeap, smallest);
+    }
+}
+
+// Function to insert a new node into the min-heap
+void insertMinHeap(struct MinHeap* minHeap, struct MinHeapNode* minHeapNode) {
+    ++minHeap->size;
+    int i = minHeap->size - 1;
+
+    while (i && minHeapNode->node->val < minHeap->heapArray[(i - 1) / 2].node->val) {
+        minHeap->heapArray[i] = minHeap->heapArray[(i - 1) / 2];
+        i = (i - 1) / 2;
+    }
+
+    minHeap->heapArray[i] = *minHeapNode;
+}
+
+// Function to extract the minimum node from the min-heap
+struct ListNode* extractMin(struct MinHeap* minHeap) {
+    if (minHeap->size == 0)
+        return NULL;
+
+    struct MinHeapNode temp = minHeap->heapArray[0];
+    struct ListNode* node = temp.node;
+
+    if (temp.node->next != NULL) {
+        // Replace root with next node from the same list
+        minHeap->heapArray[0].node = temp.node->next;
+    } else {
+        // If list is exhausted, replace root with last node and decrease heap size
+        minHeap->heapArray[0] = minHeap->heapArray[minHeap->size - 1];
+        minHeap->size--;
+    }
+
+    // Heapify root
+    minHeapify(minHeap, 0);
+
+    return node;
+}
+
+// Function to merge k sorted linked lists into one sorted linked list
+struct ListNode* mergeKLists(struct ListNode** lists, int listsSize) {
+    if (listsSize == 0) return NULL;
+
+    // Create a min-heap with an array of pointers to the heads of linked lists
+    struct MinHeap minHeap;
+    minHeap.size = listsSize;
+    minHeap.capacity = listsSize;
+    minHeap.heapArray = (struct MinHeapNode*)malloc(listsSize * sizeof(struct MinHeapNode));
+
+    // Initialize heap with heads of all k linked lists
+    for (int i = 0; i < listsSize; ++i) {
+        minHeap.heapArray[i] = *newMinHeapNode(lists[i], i);
+    }
+
+    // Build the min-heap
+    for (int i = listsSize / 2 - 1; i >= 0; --i) {
+        minHeapify(&minHeap, i);
+    }
+
+    // Initialize the merged linked list and pointer to its head
+    struct ListNode dummy;
+    struct ListNode* tail = &dummy;
+    dummy.next = NULL;
+
+    // Process until min-heap is empty
+    while (minHeap.size > 0) {
+        struct ListNode* minNode = extractMin(&minHeap);
+        tail->next = minNode;
+        tail = tail->next;
+    }
+
+    // Free allocated memory for min-heap
+    free(minHeap.heapArray);
+
+    // Return the merged linked list (ignore dummy node)
+    return dummy.next;
+}
+
+// Function to create a new ListNode
+struct ListNode* newNode(int val) {
+    struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+    node->val = val;
+    node->next = NULL;
+    return node;
+}
+
+// Function to print a linked list
+void printList(struct ListNode* node) {
+    while (node) {
+        printf("%d -> ", node->val);
+        node = node->next;
+    }
+    printf("NULL\n");
+}
+
+// Example usage
+int main() {
+    // Example lists as arrays of nodes
+    struct ListNode* list1 = newNode(1);
+    list1->next = newNode(4);
+    list1->next->next = newNode(5);
+
+    struct ListNode* list2 = newNode(1);
+    list2->next = newNode(3);
+    list2->next->next = newNode(4);
+
+    struct ListNode* list3 = newNode(2);
+    list3->next = newNode(6);
+
+    // Array of pointers to linked lists
+    struct ListNode* lists[] = {list1, list2, list3};
+    int listsSize = sizeof(lists) / sizeof(lists[0]);
+
+    // Merge the lists and print the result
+    struct ListNode* mergedList = mergeKLists(lists, listsSize);
+    printf("Merged Linked List: ");
+    printList(mergedList);
+
+    // Free dynamically allocated memory
+    for (int i = 0; i < listsSize; ++i) {
+        struct ListNode* current = lists[i];
+        while (current != NULL) {
+            struct ListNode* temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+
+    return 0;
+}
