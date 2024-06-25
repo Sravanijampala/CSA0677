@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Compare function for sorting
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int** fourSum(int* nums, int numsSize, int target, int* returnSize, int** returnColumnSizes) {
+    // Sort the array
+    qsort(nums, numsSize, sizeof(int), compare);
+    
+    // Initialize variables
+    int** result = (int**)malloc(numsSize * numsSize * sizeof(int*));
+    *returnColumnSizes = (int*)malloc(numsSize * numsSize * sizeof(int));
+    *returnSize = 0;
+    
+    // Iterate through the array to fix first two elements
+    for (int i = 0; i < numsSize - 3; ++i) {
+        // Skip duplicates for the first element
+        if (i > 0 && nums[i] == nums[i - 1]) continue;
+        
+        for (int j = i + 1; j < numsSize - 2; ++j) {
+            // Skip duplicates for the second element
+            if (j > i + 1 && nums[j] == nums[j - 1]) continue;
+            
+            int left = j + 1;
+            int right = numsSize - 1;
+            
+            while (left < right) {
+                int sum = nums[i] + nums[j] + nums[left] + nums[right];
+                
+                if (sum == target) {
+                    // Found a valid quadruplet
+                    result[*returnSize] = (int*)malloc(4 * sizeof(int));
+                    result[*returnSize][0] = nums[i];
+                    result[*returnSize][1] = nums[j];
+                    result[*returnSize][2] = nums[left];
+                    result[*returnSize][3] = nums[right];
+                    (*returnColumnSizes)[*returnSize] = 4;
+                    (*returnSize)++;
+                    
+                    // Skip duplicates for the third element
+                    while (left < right && nums[left] == nums[left + 1]) left++;
+                    left++;
+                    
+                    // Skip duplicates for the fourth element
+                    while (left < right && nums[right] == nums[right - 1]) right--;
+                    right--;
+                } else if (sum < target) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+    }
+    
+    return result;
+}
+
+// Function to free the allocated memory for result
+void freeResult(int** result, int returnSize) {
+    for (int i = 0; i < returnSize; ++i) {
+        free(result[i]);
+    }
+    free(result);
+}
+
+// Example usage
+int main() {
+    int nums1[] = {1, 0, -1, 0, -2, 2};
+    int numsSize1 = sizeof(nums1) / sizeof(nums1[0]);
+    int target1 = 0;
+    
+    int returnSize1;
+    int* returnColumnSizes1;
+    int** result1 = fourSum(nums1, numsSize1, target1, &returnSize1, &returnColumnSizes1);
+    
+    printf("Example 1 Output:\n");
+    for (int i = 0; i < returnSize1; ++i) {
+        printf("[");
+        for (int j = 0; j < returnColumnSizes1[i]; ++j) {
+            printf("%d", result1[i][j]);
+            if (j < returnColumnSizes1[i] - 1) printf(",");
+        }
+        printf("]\n");
+    }
+    
+    // Free allocated memory
+    freeResult(result1, returnSize1);
+    free(returnColumnSizes1);
+    
+    return 0;
+}
