@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int findNthDigit(int n) {
+    long base = 9; // number of digits contributed by each digit group
+    int digits = 1; // number of digits in current group
+    long start = 1; // starting number of current digit group
+    
+    // Find which digit group n belongs to
+    while (n > digits * base) {
+        n -= digits * base;
+        digits++;
+        base *= 10;
+        start *= 10;
+    }
+    
+    // Find the exact number where the nth digit lies
+    long num = start + (n - 1) / digits;
+    
+    // Find the nth digit within num
+    int idx = (n - 1) % digits;
+    return (int)(num / pow(10, digits - 1 - idx)) % 10;
+}
+
+// Example usage
+int main() {
+    int n1 = 3;
+    int n2 = 11;
+    
+    printf("Nth digit for n = %d: %d\n", n1, findNthDigit(n1));
+    printf("Nth digit for n = %d: %d\n", n2, findNthDigit(n2));
+    
+    return 0;
+}
