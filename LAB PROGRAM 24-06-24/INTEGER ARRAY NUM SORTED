@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+int minOperations(int* nums, int numsSize) {
+    int minLen = 0;
+    int i = 0;
+    
+    while (i < numsSize) {
+        int count = 1;
+        
+        // Count consecutive duplicates
+        while (i + 1 < numsSize && nums[i] == nums[i + 1]) {
+            count++;
+            i++;
+        }
+        
+        // Increment the minimum length by count - 1 (since count - 1 elements can be removed)
+        minLen += count - 1;
+        
+        // Move to the next element
+        i++;
+    }
+    
+    return minLen;
+}
+
+// Example usage
+int main() {
+    int nums[] = {1, 2, 3, 4};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    
+    int result = minOperations(nums, numsSize);
+    printf("Minimum length after operations: %d\n", result);
+    
+    return 0;
+}
