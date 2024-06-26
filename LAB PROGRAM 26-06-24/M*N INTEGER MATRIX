@@ -1,0 +1,63 @@
+#include <stdio.h>
+
+void setZeroes(int** matrix, int matrixSize, int* matrixColSize) {
+    int m = matrixSize;
+    int n = *matrixColSize;
+    
+    // Arrays to mark which rows and columns should be zeroed out
+    int rows[m];
+    int cols[n];
+    
+    // Initialize arrays
+    for (int i = 0; i < m; ++i) {
+        rows[i] = 0;
+    }
+    for (int j = 0; j < n; ++j) {
+        cols[j] = 0;
+    }
+    
+    // Mark rows and columns to be zeroed out
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (matrix[i][j] == 0) {
+                rows[i] = 1;
+                cols[j] = 1;
+            }
+        }
+    }
+    
+    // Set zeros based on marks in rows and cols
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            if (rows[i] == 1 || cols[j] == 1) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+}
+
+int main() {
+    // Example usage
+    int matrixSize = 3;
+    int matrixColSize = 3;
+    int matrix[3][3] = {{1, 1, 1}, {1, 0, 1}, {1, 1, 1}};
+    
+    // Convert matrix to int** form (as needed by the function signature)
+    int* matrixPtr[3];
+    for (int i = 0; i < matrixSize; ++i) {
+        matrixPtr[i] = matrix[i];
+    }
+    
+    setZeroes(matrixPtr, matrixSize, &matrixColSize);
+    
+    // Output the modified matrix
+    printf("Output:\n");
+    for (int i = 0; i < matrixSize; ++i) {
+        for (int j = 0; j < matrixColSize; ++j) {
+            printf("%d ", matrix[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}
