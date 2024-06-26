@@ -1,0 +1,56 @@
+#include <stdio.h>
+
+void transpose(int** matrix, int matrixSize, int* matrixColSize, int** transposeMatrix, int* transposeMatrixColSize) {
+    int m = matrixSize;
+    int n = *matrixColSize;
+    
+    for (int i = 0; i < m; ++i) {
+        for (int j = 0; j < n; ++j) {
+            transposeMatrix[j][i] = matrix[i][j];
+        }
+    }
+}
+
+int main() {
+    // Example 1
+    int matrixSize1 = 3;
+    int matrixColSize1 = 3;
+    int matrix1[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+    
+    // Create transpose matrix with dimensions swapped
+    int transposeMatrix1[3][3];
+    
+    transpose((int**)matrix1, matrixSize1, &matrixColSize1, (int**)transposeMatrix1, &matrixSize1);
+    
+    // Output the transpose matrix
+    printf("Transpose Matrix 1:\n");
+    for (int i = 0; i < matrixColSize1; ++i) {
+        for (int j = 0; j < matrixSize1; ++j) {
+            printf("%d ", transposeMatrix1[i][j]);
+        }
+        printf("\n");
+    }
+    
+    printf("\n");
+    
+    // Example 2
+    int matrixSize2 = 2;
+    int matrixColSize2 = 3;
+    int matrix2[2][3] = {{1, 2, 3}, {4, 5, 6}};
+    
+    // Create transpose matrix with dimensions swapped
+    int transposeMatrix2[3][2];
+    
+    transpose((int**)matrix2, matrixSize2, &matrixColSize2, (int**)transposeMatrix2, &matrixSize2);
+    
+    // Output the transpose matrix
+    printf("Transpose Matrix 2:\n");
+    for (int i = 0; i < matrixColSize2; ++i) {
+        for (int j = 0; j < matrixSize2; ++j) {
+            printf("%d ", transposeMatrix2[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}
