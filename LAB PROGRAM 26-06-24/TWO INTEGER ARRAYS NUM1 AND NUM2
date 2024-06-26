@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define a structure for a hash set using linked list for chaining
+struct Node {
+    int key;
+    struct Node* next;
+};
+
+struct HashSet {
+    struct Node** table;
+    int size;
+};
+
+struct HashSet* createHashSet(int size) {
+    struct HashSet* set = (struct HashSet*) malloc(sizeof(struct HashSet));
+    set->size = size;
+    set->table = (struct Node**) malloc(size * sizeof(struct Node*));
+    for (int i = 0; i < size; ++i) {
+        set->table[i] = NULL;
+    }
+    return set;
+}
+
+int hashFunction(int key, int size) {
+    return key % size;
+}
+
+void insert(struct HashSet* set, int key) {
+    int index = hashFunction(key, set->size);
+    struct Node* newNode = (struct Node*) malloc(sizeof(struct Node));
+    newNode->key = key;
+    newNode->next = set->table[index];
+    set->table[index] = newNode;
+}
+
+int find(struct HashSet* set, int key) {
+    int index = hashFunction(key, set->size);
+    struct Node* current = set->table[index];
+    while (current != NULL) {
+        if (current->key == key) {
+            return 1; // Found
+        }
+        current = current->next;
+    }
+    return 0; // Not found
+}
+
+void freeHashSet(struct HashSet* set) {
+    for (int i = 0; i < set->size; ++i) {
+        struct Node* current = set->table[i];
+        while (current != NULL) {
+            struct Node* temp = current;
+            current = current->next;
+            free(temp);
+        }
+    }
+    free(set->table);
+    free(set);
+}
+
+int* intersection(int* nums1, int nums1Size, int* nums2, int nums2Size, int* returnSize) {
+    struct HashSet* set = createHashSet(1001); // We can assume range from 0 to 1000 based on the problem constraints
+    for (int i = 0; i < nums1Size; ++i) {
+        insert(set, nums1[i]);
+    }
+    
+    int* result = (int*) malloc(1001 * sizeof(int)); // Allocate maximum possible size
+    int resultSize = 0;
+    
+    for (int i = 0; i < nums2Size; ++i) {
+        if (find(set, nums2[i])) {
+            // If nums2[i] exists in the set and not added to result yet
+            result[resultSize++] = nums2[i];
+            // Remove it from the set to ensure uniqueness
+            for (int j = 0; j < set->size; ++j) {
+                struct Node* current = set->table[j];
+                struct Node* prev = NULL;
+                while (current != NULL) {
+                    if (current->key == nums2[i]) {
+                        if (prev == NULL) {
+                            set->table[j] = current->next;
+                        } else {
+                            prev->next = current->next;
+                        }
+                        free(current);
+                        break;
+                    }
+                    prev = current;
+                    current = current->next;
+                }
+            }
+        }
+    }
+    
+    freeHashSet(set);
+    *returnSize = resultSize;
+    return result;
+}
+
+int main() {
+    int nums1[] = {1, 2, 2, 1};
+    int nums2[] = {2, 2};
+    int nums1Size = sizeof(nums1) / sizeof(nums1[0]);
+    int nums2Size = sizeof(nums2) / sizeof(nums2[0]);
+    
+    int returnSize;
+    int* result = intersection(nums1, nums1Size, nums2, nums2Size, &returnSize);
+    
+    printf("Output: ");
+    for (int i = 0; i < returnSize; ++i) {
+        printf("%d ", result[i]);
+    }
+    printf("\n");
+    
+    free(result);
+    
+    return 0;
+}
