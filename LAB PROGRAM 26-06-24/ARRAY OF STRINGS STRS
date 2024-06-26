@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_CHAR 26
+
+struct Anagram {
+    char *word;
+    int count[MAX_CHAR];
+};
+
+int areAnagrams(char *str1, char *str2) {
+    int count1[MAX_CHAR] = {0};
+    int count2[MAX_CHAR] = {0};
+
+    for (int i = 0; str1[i] && str2[i]; i++) {
+        count1[str1[i] - 'a']++;
+        count2[str2[i] - 'a']++;
+    }
+
+    if (str1[i] || str2[i]) {
+        return 0;
+    }
+
+    for (int i = 0; i < MAX_CHAR; i++) {
+        if (count1[i] != count2[i]) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+void groupAnagrams(char **strs, int strsSize) {
+    struct Anagram *anagrams = (struct Anagram *)malloc(strsSize * sizeof(struct Anagram));
+
+    for (int i = 0; i < strsSize; i++) {
+        anagrams[i].word = strs[i];
+        memset(anagrams[i].count, 0, sizeof(anagrams[i].count));
+
+        for (int j = 0; strs[i][j]; j++) {
+            anagrams[i].count[strs[i][j] - 'a']++;
+        }
+    }
+
+    for (int i = 0; i < strsSize; i++) {
+        if (anagrams[i].word == NULL) {
+            continue;
+        }
+
+        printf("[");
+        for (int j = i + 1; j < strsSize; j++) {
+            if (anagrams[j].word != NULL && areAnagrams(anagrams[i].word, anagrams[j].word)) {
+                printf("\"%s\",", anagrams[j].word);
+                anagrams[j].word = NULL;
+            }
+        }
+        printf("\"%s\"]\n", anagrams[i].word);
+    }
+
+    free(anagrams);
+}
+
+int main() {
+    char *strs1[] = {"eat", "tea", "tan", "ate", "nat", "bat"};
+    int strsSize1 = sizeof(strs1) / sizeof(strs1[0]);
+
+    char *strs2[] = {""};
+    int strsSize2 = sizeof(strs2) / sizeof(strs2[0]);
+
+    printf("Example 1:\n");
+    groupAnagrams(strs1, strsSize1);
+
+    printf("\nExample 2:\n");
+    groupAnagrams(strs2, strsSize2);
+
+    return 0;
+}
