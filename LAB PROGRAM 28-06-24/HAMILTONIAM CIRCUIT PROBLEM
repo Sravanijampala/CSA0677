@@ -1,0 +1,151 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_VERTICES 100 // Adjust this based on your maximum number of vertices
+
+// Structure to represent a graph
+struct Graph {
+    int num_vertices;
+    int adjacency_matrix[MAX_VERTICES][MAX_VERTICES];
+};
+
+// Function prototypes
+void initialize_graph(struct Graph *G, int num_vertices);
+void add_edge(struct Graph *G, int v1, int v2);
+void print_graph(struct Graph *G);
+bool is_valid(struct Graph *G, int path[], int pos, int v);
+bool hamiltonian_circuit_util(struct Graph *G, int path[], int pos);
+bool hamiltonian_circuit(struct Graph *G);
+
+// Main function
+int main() {
+    struct Graph G;
+    int num_vertices, num_edges;
+    int v1, v2;
+
+    // Input number of vertices and edges
+    printf("Enter number of vertices: ");
+    scanf("%d", &num_vertices);
+
+    printf("Enter number of edges: ");
+    scanf("%d", &num_edges);
+
+    // Initialize the graph
+    initialize_graph(&G, num_vertices);
+
+    // Input edges
+    printf("Enter edges (vertex1 vertex2):\n");
+    for (int i = 0; i < num_edges; ++i) {
+        scanf("%d %d", &v1, &v2);
+        add_edge(&G, v1, v2);
+    }
+
+    // Print the adjacency matrix (optional)
+    printf("Adjacency Matrix:\n");
+    print_graph(&G);
+
+    // Find and print all Hamiltonian circuits
+    if (!hamiltonian_circuit(&G)) {
+        printf("No Hamiltonian circuit found.\n");
+    }
+
+    return 0;
+}
+
+// Function to initialize the graph with given number of vertices
+void initialize_graph(struct Graph *G, int num_vertices) {
+    G->num_vertices = num_vertices;
+
+    // Initialize adjacency matrix with 0s
+    for (int i = 0; i < num_vertices; ++i) {
+        for (int j = 0; j < num_vertices; ++j) {
+            G->adjacency_matrix[i][j] = 0;
+        }
+    }
+}
+
+// Function to add an edge between vertices v1 and v2
+void add_edge(struct Graph *G, int v1, int v2) {
+    G->adjacency_matrix[v1][v2] = 1;
+    G->adjacency_matrix[v2][v1] = 1; // Since the graph is undirected
+}
+
+// Function to print the adjacency matrix of the graph
+void print_graph(struct Graph *G) {
+    for (int i = 0; i < G->num_vertices; ++i) {
+        for (int j = 0; j < G->num_vertices; ++j) {
+            printf("%d ", G->adjacency_matrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// Utility function to check if the current vertex can be added to the Hamiltonian path
+bool is_valid(struct Graph *G, int path[], int pos, int v) {
+    // Check if this vertex is adjacent to the previously added vertex
+    if (G->adjacency_matrix[path[pos - 1]][v] == 0) {
+        return false;
+    }
+
+    // Check if the vertex has already been included
+    for (int i = 0; i < pos; ++i) {
+        if (path[i] == v) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Recursive utility function to find all Hamiltonian circuits starting from the current position
+bool hamiltonian_circuit_util(struct Graph *G, int path[], int pos) {
+    // Base case: if all vertices are included in the path
+    if (pos == G->num_vertices) {
+        // Check if there is an edge from the last included vertex to the first vertex in path
+        if (G->adjacency_matrix[path[pos - 1]][path[0]] == 1) {
+            // Print the Hamiltonian circuit found
+            printf("Hamiltonian Circuit found: ");
+            for (int i = 0; i < G->num_vertices; ++i) {
+                printf("%d ", path[i]);
+            }
+            printf("%d\n", path[0]);
+            return true;
+        }
+        return false;
+    }
+
+    // Try different vertices as the next candidate in Hamiltonian cycle
+    for (int v = 1; v < G->num_vertices; ++v) {
+        if (is_valid(G, path, pos, v)) {
+            path[pos] = v;
+            if (hamiltonian_circuit_util(G, path, pos + 1)) {
+                return true;
+            }
+            // Backtrack
+            path[pos] = -1;
+        }
+    }
+
+    return false;
+}
+
+// Function to find all Hamiltonian circuits in the graph
+bool hamiltonian_circuit(struct Graph *G) {
+    int path[MAX_VERTICES];
+
+    // Initialize all vertices as not included in Hamiltonian path
+    for (int i = 0; i < G->num_vertices; ++i) {
+        path[i] = -1;
+    }
+
+    // Start from vertex 0 as the first vertex in the path
+    path[0] = 0;
+
+    // Call recursive utility function to find all Hamiltonian circuits
+    if (!hamiltonian_circuit_util(G, path, 1)) {
+        printf("No Hamiltonian circuit found.\n");
+        return false;
+    }
+
+    return true;
+}
