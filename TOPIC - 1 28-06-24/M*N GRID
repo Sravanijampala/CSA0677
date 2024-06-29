@@ -1,0 +1,59 @@
+#include <stdio.h>
+
+// Function to count paths out of grid boundary in exactly N steps
+int findPaths(int m, int n, int N, int i, int j) {
+    // Edge case: If N is 0, no steps can be taken
+    if (N == 0) return 0;
+    
+    // Create a 3D array to store the number of ways
+    long long dp[N + 1][m][n];
+    memset(dp, 0, sizeof(dp));  // Initialize all values to 0
+    
+    // Initial position has 1 way (starting point)
+    dp[0][i][j] = 1;
+    
+    // Directions: right, left, down, up
+    int directions[4][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    
+    // Fill the dp array
+    for (int step = 1; step <= N; step++) {
+        for (int row = 0; row < m; row++) {
+            for (int col = 0; col < n; col++) {
+                for (int d = 0; d < 4; d++) {
+                    int prevRow = row + directions[d][0];
+                    int prevCol = col + directions[d][1];
+                    
+                    // If the previous position is within bounds
+                    if (prevRow >= 0 && prevRow < m && prevCol >= 0 && prevCol < n) {
+                        dp[step][row][col] += dp[step - 1][prevRow][prevCol];
+                        dp[step][row][col] %= 1000000007; // To prevent overflow
+                    }
+                }
+            }
+        }
+    }
+    
+    // Sum up all ways to move out of boundary in exactly N steps
+    long long ways = 0;
+    for (int step = 1; step <= N; step++) {
+        for (int row = 0; row < m; row++) {
+            for (int col = 0; col < n; col++) {
+                // If the cell is on the boundary
+                if (row == 0 || row == m - 1 || col == 0 || col == n - 1) {
+                    ways += dp[step][row][col];
+                    ways %= 1000000007; // To prevent overflow
+                }
+            }
+        }
+    }
+    
+    return (int)ways;
+}
+
+int main() {
+    // Test cases
+    printf("Output for m=2, n=2, N=2, i=0, j=0: %d\n", findPaths(2, 2, 2, 0, 0));
+    printf("Output for m=1, n=3, N=3, i=0, j=1: %d\n", findPaths(1, 3, 3, 0, 1));
+    
+    return 0;
+}
