@@ -1,0 +1,47 @@
+#include <stdio.h>
+
+#define MAXN 100005 // Maximum size of nums array
+
+int sumOfSquaresDistinctCounts(int* nums, int numsSize) {
+    int sum_of_squares = 0;
+    int n = numsSize;
+    int count[MAXN] = {0}; // To count frequencies of elements
+    int last_occurrence[MAXN] = {-1}; // To track last occurrence index of each element
+    int left = 0;
+    
+    for (int right = 0; right < n; right++) {
+        // Update count and last_occurrence for nums[right]
+        count[nums[right]]++;
+        last_occurrence[nums[right]] = right;
+        
+        // Slide left pointer to maintain a valid subarray
+        while (left <= right && count[nums[right]] > 1) {
+            count[nums[left]]--;
+            left++;
+        }
+        
+        // Calculate distinct count for the subarrays ending at right
+        int distinct_count = 0;
+        for (int i = left; i <= right; i++) {
+            if (last_occurrence[nums[i]] >= left) {
+                distinct_count++;
+            }
+        }
+        
+        // Add square of distinct count to sum_of_squares
+        sum_of_squares += distinct_count * distinct_count;
+    }
+    
+    return sum_of_squares;
+}
+
+int main() {
+    int nums[] = {1, 2, 1};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    
+    int result = sumOfSquaresDistinctCounts(nums, numsSize);
+    
+    printf("Output: %d\n", result);
+    
+    return 0;
+}
