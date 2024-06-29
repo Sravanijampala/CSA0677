@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+// Function to find maximum of two integers
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+// Function to find maximum money that can be robbed from a circular street of houses
+int rob(int* nums, int numsSize) {
+    if (numsSize == 0) return 0;
+    if (numsSize == 1) return nums[0];
+    
+    // Function to calculate maximum money that can be robbed from a linear range of houses
+    int robLinear(int* nums, int start, int end) {
+        int prev1 = 0; // Represents dp[i-1]
+        int prev2 = 0; // Represents dp[i-2]
+        
+        for (int i = start; i <= end; i++) {
+            int current = max(prev2 + nums[i], prev1);
+            prev2 = prev1;
+            prev1 = current;
+        }
+        
+        return prev1;
+    }
+    
+    // Two cases: rob from the first house to the second last house, or from the second house to the last house
+    return max(robLinear(nums, 0, numsSize - 2), robLinear(nums, 1, numsSize - 1));
+}
+
+int main() {
+    int nums1[] = {2, 3, 2};
+    int size1 = sizeof(nums1) / sizeof(nums1[0]);
+    printf("Maximum money that can be robbed: %d\n", rob(nums1, size1));
+    
+    int nums2[] = {1, 2, 3, 1};
+    int size2 = sizeof(nums2) / sizeof(nums2[0]);
+    printf("Maximum money that can be robbed: %d\n", rob(nums2, size2));
+    
+    return 0;
+}
