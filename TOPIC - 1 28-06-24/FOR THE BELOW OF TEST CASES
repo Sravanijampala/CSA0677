@@ -1,0 +1,33 @@
+#include <stdio.h>
+
+int findMax(int* nums, int numsSize) {
+    int max = nums[0]; // Initialize max with the first element
+    
+    // Iterate through the array to find the maximum element
+    for (int i = 1; i < numsSize; i++) {
+        if (nums[i] > max) {
+            max = nums[i];
+        }
+    }
+    
+    return max;
+}
+
+int main() {
+    // Test Case 1
+    int nums1[] = {1, 2, 3, 4, 5};
+    int numsSize1 = sizeof(nums1) / sizeof(nums1[0]);
+    printf("Test Case 1: %d\n", findMax(nums1, numsSize1));
+    
+    // Test Case 2
+    int nums2[] = {7, 7, 7, 7, 7};
+    int numsSize2 = sizeof(nums2) / sizeof(nums2[0]);
+    printf("Test Case 2: %d\n", findMax(nums2, numsSize2));
+    
+    // Test Case 3
+    int nums3[] = {-10, 2, 3, -4, 5};
+    int numsSize3 = sizeof(nums3) / sizeof(nums3[0]);
+    printf("Test Case 3: %d\n", findMax(nums3, numsSize3));
+    
+    return 0;
+}
