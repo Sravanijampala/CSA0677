@@ -1,0 +1,34 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Comparison function for qsort
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+
+int findMaxInSorted(int* nums, int numsSize) {
+    if (numsSize == 0) {
+        printf("List is empty.\n");
+        return -1; // Return -1 or appropriate indicator for empty list
+    }
+    
+    // Sort the array using qsort
+    qsort(nums, numsSize, sizeof(int), compare);
+    
+    // Maximum element is the last element after sorting
+    return nums[numsSize - 1];
+}
+
+int main() {
+    // Test Case 1: Empty List
+    int nums1[] = {};
+    int numsSize1 = 0;
+    int max1 = findMaxInSorted(nums1, numsSize1);
+    if (max1 != -1) {
+        printf("Test Case 1 Failed: Expected empty list message.\n");
+    } else {
+        printf("Test Case 1 Passed: List is empty message.\n");
+    }
+    
+    return 0;
+}
