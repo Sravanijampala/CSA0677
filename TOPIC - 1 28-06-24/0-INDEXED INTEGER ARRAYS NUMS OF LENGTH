@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAXN 100005 // Maximum size of nums array
+
+typedef struct {
+    int key;
+    int val;
+} Pair;
+
+int cmpfunc(const void *a, const void *b) {
+    return ((Pair *)a)->key - ((Pair *)b)->key;
+}
+
+int countPairs(int* nums, int numsSize, int k) {
+    int count[MAXN] = {0}; // To count frequencies of elements
+    int modCount[MAXN] = {0}; // To count remainders (i * j) % k
+    int result = 0;
+    
+    // Count frequencies of elements in nums
+    for (int i = 0; i < numsSize; i++) {
+        count[nums[i]]++;
+    }
+    
+    // Calculate valid pairs
+    for (int i = 0; i < numsSize; i++) {
+        int num = nums[i];
+        int freq = count[num];
+        
+        // Calculate (i * j) % k for all j > i
+        for (int j = i + 1; j < numsSize; j++) {
+            int other = nums[j];
+            if (num == other) {
+                int remainder = (long long)i * j % k;
+                if (remainder < 0) remainder += k; // Handle negative remainders
+                
+                result += modCount[remainder];
+            }
+        }
+        
+        // Update modCount for the current element
+        int remainder = (long long)i * numsSize % k;
+        if (remainder < 0) remainder += k; // Handle negative remainders
+        modCount[remainder] += freq;
+    }
+    
+    return result;
+}
+
+int main() {
+    int nums[] = {3, 1, 2, 2, 2, 1, 3};
+    int numsSize = sizeof(nums) / sizeof(nums[0]);
+    int k = 2;
+    
+    int result = countPairs(nums, numsSize, k);
+    
+    printf("Output: %d\n", result);
+    
+    return 0;
+}
