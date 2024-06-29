@@ -1,0 +1,123 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure of a node in the hash set (hash table)
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to create a new node
+struct Node* newNode(int data) {
+    struct Node* temp = (struct Node*)malloc(sizeof(struct Node));
+    temp->data = data;
+    temp->next = NULL;
+    return temp;
+}
+
+// Function to initialize hash set
+struct Node** initializeHashSet(int size) {
+    struct Node** hashSet = (struct Node**)malloc(size * sizeof(struct Node*));
+    for (int i = 0; i < size; i++) {
+        hashSet[i] = NULL;
+    }
+    return hashSet;
+}
+
+// Function to calculate hash index
+int hashFunction(int key, int size) {
+    return abs(key) % size;
+}
+
+// Function to insert key into hash set
+void insertHashSet(struct Node** hashSet, int key, int size) {
+    int index = hashFunction(key, size);
+    struct Node* newNode = newNode(key);
+    newNode->next = hashSet[index];
+    hashSet[index] = newNode;
+}
+
+// Function to check if key exists in hash set
+int existsInHashSet(struct Node** hashSet, int key, int size) {
+    int index = hashFunction(key, size);
+    struct Node* temp = hashSet[index];
+    while (temp != NULL) {
+        if (temp->data == key) {
+            return 1; // Key found
+        }
+        temp = temp->next;
+    }
+    return 0; // Key not found
+}
+
+// Function to create a new list with unique elements
+int* uniqueElements(int* nums, int numsSize, int* returnSize) {
+    // Assuming input numbers are integers and within reasonable bounds
+    int maxSize = 100000; // Maximum size for the hash set (adjust if needed)
+    struct Node** hashSet = initializeHashSet(maxSize);
+    
+    int* result = (int*)malloc(numsSize * sizeof(int));
+    *returnSize = 0;
+    
+    for (int i = 0; i < numsSize; i++) {
+        if (!existsInHashSet(hashSet, nums[i], maxSize)) {
+            insertHashSet(hashSet, nums[i], maxSize);
+            result[(*returnSize)++] = nums[i];
+        }
+    }
+    
+    // Free hash set memory
+    for (int i = 0; i < maxSize; i++) {
+        struct Node* temp = hashSet[i];
+        while (temp != NULL) {
+            struct Node* prev = temp;
+            temp = temp->next;
+            free(prev);
+        }
+    }
+    free(hashSet);
+    
+    return result;
+}
+
+// Function to print an array
+void printArray(int* arr, int size) {
+    printf("[");
+    for (int i = 0; i < size; i++) {
+        printf("%d", arr[i]);
+        if (i != size - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main() {
+    // Test Case 1
+    int nums1[] = {3, 7, 3, 5, 2, 5, 9, 2};
+    int numsSize1 = sizeof(nums1) / sizeof(nums1[0]);
+    
+    int returnSize1;
+    int* result1 = uniqueElements(nums1, numsSize1, &returnSize1);
+    
+    printf("Test Case 1 Output: ");
+    printArray(result1, returnSize1);
+    
+    // Free dynamically allocated memory
+    free(result1);
+    
+    // Test Case 2
+    int nums2[] = {-10, 2, 3, -4, 5};
+    int numsSize2 = sizeof(nums2) / sizeof(nums2[0]);
+    
+    int returnSize2;
+    int* result2 = uniqueElements(nums2, numsSize2, &returnSize2);
+    
+    printf("Test Case 2 Output: ");
+    printArray(result2, returnSize2);
+    
+    // Free dynamically allocated memory
+    free(result2);
+    
+    return 0;
+}
