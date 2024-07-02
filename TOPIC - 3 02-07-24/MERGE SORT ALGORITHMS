@@ -1,0 +1,95 @@
+#include <stdio.h>
+
+// Function to merge two halves arr[l..m] and arr[m+1..r] of array arr[]
+// and count comparisons during merging
+void merge(int arr[], int l, int m, int r, int *comparison_count) {
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    // Create temporary arrays
+    int L[n1], R[n2];
+
+    // Copy data to temporary arrays L[] and R[]
+    for (i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+
+    // Merge the temporary arrays back into arr[l..r]
+    i = 0; // Initial index of first subarray
+    j = 0; // Initial index of second subarray
+    k = l; // Initial index of merged subarray
+    while (i < n1 && j < n2) {
+        (*comparison_count)++; // Count a comparison
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    // Copy the remaining elements of L[], if any
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    // Copy the remaining elements of R[], if any
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+// Main function to implement merge sort
+void mergeSort(int arr[], int l, int r, int *comparison_count) {
+    if (l < r) {
+        // Same as (l+r)/2, but avoids overflow for large l and h
+        int m = l + (r - l) / 2;
+
+        // Sort first and second halves
+        mergeSort(arr, l, m, comparison_count);
+        mergeSort(arr, m + 1, r, comparison_count);
+
+        // Merge the sorted halves
+        merge(arr, l, m, r, comparison_count);
+    }
+}
+
+int main() {
+    // Test case 1: N= 8, a[] = {12,4,78,23,45,67,89,1}
+    int arr1[] = {12, 4, 78, 23, 45, 67, 89, 1};
+    int n1 = sizeof(arr1) / sizeof(arr1[0]);
+    int comparison_count1 = 0;
+
+    // Perform merge sort
+    mergeSort(arr1, 0, n1 - 1, &comparison_count1);
+
+    // Print the sorted array and number of comparisons
+    printf("Sorted array (Test Case 1): ");
+    for (int i = 0; i < n1; i++)
+        printf("%d ", arr1[i]);
+    printf("\nNumber of comparisons: %d\n", comparison_count1);
+
+    // Test case 2: N= 7, a[] = {38,27,43,3,9,82,10}
+    int arr2[] = {38, 27, 43, 3, 9, 82, 10};
+    int n2 = sizeof(arr2) / sizeof(arr2[0]);
+    int comparison_count2 = 0;
+
+    // Perform merge sort
+    mergeSort(arr2, 0, n2 - 1, &comparison_count2);
+
+    // Print the sorted array and number of comparisons
+    printf("\nSorted array (Test Case 2): ");
+    for (int i = 0; i < n2; i++)
+        printf("%d ", arr2[i]);
+    printf("\nNumber of comparisons: %d\n", comparison_count2);
+
+    return 0;
+}
