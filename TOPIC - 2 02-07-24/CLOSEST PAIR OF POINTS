@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+// Structure to represent a point in 2D
+typedef struct {
+    int x;
+    int y;
+} Point;
+
+// Function to calculate the Euclidean distance between two points
+double distance(Point p1, Point p2) {
+    return sqrt(pow(p1.x - p2.x, 2) + pow(p1.y - p2.y, 2));
+}
+
+// Function to find the closest pair of points using brute force approach
+void closestPairOfPoints(Point points[], int n, Point *closest1, Point *closest2, double *minDistance) {
+    if (n < 2) {
+        printf("Need at least two points to find the closest pair.\n");
+        return;
+    }
+    
+    *minDistance = INFINITY; // Initialize minDistance to a large value
+    
+    // Iterate through all pairs of points
+    for (int i = 0; i < n - 1; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            double dist = distance(points[i], points[j]);
+            if (dist < *minDistance) {
+                *minDistance = dist;
+                *closest1 = points[i];
+                *closest2 = points[j];
+            }
+        }
+    }
+}
+
+int main() {
+    Point points[] = {{1, 2}, {4, 5}, {7, 8}, {3, 1}};
+    int n = sizeof(points) / sizeof(points[0]);
+    
+    Point closest1, closest2;
+    double minDistance;
+    
+    closestPairOfPoints(points, n, &closest1, &closest2, &minDistance);
+    
+    printf("Closest pair: (%d, %d) - (%d, %d)\n", closest1.x, closest1.y, closest2.x, closest2.y);
+    printf("Minimum distance: %lf\n", minDistance);
+    
+    return 0;
+}
