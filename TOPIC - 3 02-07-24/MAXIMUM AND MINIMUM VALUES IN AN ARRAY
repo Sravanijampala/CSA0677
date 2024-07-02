@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+// Function to find minimum and maximum values in an array
+void findMinMax(int arr[], int n, int *min, int *max) {
+    // Initialize min and max with the first element of the array
+    *min = arr[0];
+    *max = arr[0];
+
+    // Iterate through the array to find min and max
+    for (int i = 1; i < n; ++i) {
+        if (arr[i] < *min) {
+            *min = arr[i];
+        } else if (arr[i] > *max) {
+            *max = arr[i];
+        }
+    }
+}
+
+int main() {
+    // Test cases
+    int a1[] = {5, 7, 3, 4, 9, 12, 6, 2};
+    int n1 = 8;
+
+    int a2[] = {1, 3, 5, 7, 9, 11, 13, 15, 17};
+    int n2 = 9;
+
+    int a3[] = {22, 34, 35, 36, 43, 67, 12, 13, 15, 17};
+    int n3 = 10;
+
+    // Variables to store min and max
+    int min1, max1, min2, max2, min3, max3;
+
+    // Find min and max for each test case
+    findMinMax(a1, n1, &min1, &max1);
+    findMinMax(a2, n2, &min2, &max2);
+    findMinMax(a3, n3, &min3, &max3);
+
+    // Output results
+    printf("Test Case 1:\n");
+    printf("Min = %d, Max = %d\n", min1, max1);
+
+    printf("Test Case 2:\n");
+    printf("Min = %d, Max = %d\n", min2, max2);
+
+    printf("Test Case 3:\n");
+    printf("Min = %d, Max = %d\n", min3, max3);
+
+    return 0;
+}
