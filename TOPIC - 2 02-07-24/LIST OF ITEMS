@@ -1,0 +1,32 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_ITEMS 20
+
+// Function to calculate total value of selected items
+int total_value(int items[], int values[], int num_items) {
+    int total = 0;
+    for (int i = 0; i < num_items; ++i) {
+        total += values[items[i]];
+    }
+    return total;
+}
+
+// Function to check if the selection of items is feasible (weight <= capacity)
+int is_feasible(int items[], int weights[], int num_items, int capacity) {
+    int total_weight = 0;
+    for (int i = 0; i < num_items; ++i) {
+        total_weight += weights[items[i]];
+    }
+    return total_weight <= capacity;
+}
+
+// Function to perform exhaustive search for 0-1 Knapsack Problem
+void knapsack(int weights[], int values[], int num_items, int capacity) {
+    int max_value = 0;
+    int optimal_selection[MAX_ITEMS];
+    int selected_items[MAX_ITEMS];
+    int num_selected = 0;
+
+    // Generate all possible subsets using bitmasking
+    int 
