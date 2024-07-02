@@ -1,0 +1,98 @@
+#include <stdio.h>
+
+void bubbleSort(int arr[], int n) {
+    int i, j, temp;
+    int swapped; // Flag to check if any swaps were made
+    
+    for (i = 0; i < n - 1; ++i) {
+        swapped = 0; // Initialize swapped to false
+        
+        // Last i elements are already in place
+        for (j = 0; j < n - 1 - i; ++j) {
+            if (arr[j] > arr[j + 1]) {
+                // Swap arr[j] and arr[j + 1]
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+                swapped = 1; // Set swapped to true indicating a swap occurred
+            }
+        }
+        
+        // If no swap occurred in the inner loop, array is already sorted
+        if (swapped == 0) {
+            break;
+        }
+    }
+}
+
+void printArray(int arr[], int n) {
+    printf("[");
+    for (int i = 0; i < n; ++i) {
+        printf("%d", arr[i]);
+        if (i < n - 1) {
+            printf(", ");
+        }
+    }
+    printf("]\n");
+}
+
+int main() {
+    int test1[] = {64, 25, 12, 22, 11};
+    int test2[] = {29, 10, 14, 37, 13};
+    int test3[] = {3, 5, 2, 1, 4};
+    int test4[] = {1, 2, 3, 4, 5};
+    int test5[] = {5, 4, 3, 2, 1};
+    
+    int n1 = sizeof(test1) / sizeof(test1[0]);
+    int n2 = sizeof(test2) / sizeof(test2[0]);
+    int n3 = sizeof(test3) / sizeof(test3[0]);
+    int n4 = sizeof(test4) / sizeof(test4[0]);
+    int n5 = sizeof(test5) / sizeof(test5[0]);
+    
+    printf("Test Case 1:\n");
+    printf("Input: ");
+    printArray(test1, n1);
+    bubbleSort(test1, n1);
+    printf("Expected Output: [11, 12, 22, 25, 64]\n");
+    printf("Actual Output:   ");
+    printArray(test1, n1);
+    printf("\n");
+    
+    printf("Test Case 2:\n");
+    printf("Input: ");
+    printArray(test2, n2);
+    bubbleSort(test2, n2);
+    printf("Expected Output: [10, 13, 14, 29, 37]\n");
+    printf("Actual Output:   ");
+    printArray(test2, n2);
+    printf("\n");
+    
+    printf("Test Case 3:\n");
+    printf("Input: ");
+    printArray(test3, n3);
+    bubbleSort(test3, n3);
+    printf("Expected Output: [1, 2, 3, 4, 5]\n");
+    printf("Actual Output:   ");
+    printArray(test3, n3);
+    printf("\n");
+    
+    printf("Test Case 4:\n");
+    printf("Input: ");
+    printArray(test4, n4);
+    bubbleSort(test4, n4);
+    printf("Expected Output: [1, 2, 3, 4, 5]\n");
+    printf("Actual Output:   ");
+    printArray(test4, n4);
+    printf("\n");
+    
+    printf("Test Case 5:\n");
+    printf("Input: ");
+    printArray(test5, n5);
+    bubbleSort(test5, n5);
+    printf("Expected Output: [1, 2, 3, 4, 5]\n");
+    printf("Actual Output:   ");
+    printArray(test5, n5);
+    printf("\n");
+    
+    return 0;
+}
