@@ -1,0 +1,126 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <limits.h>
+
+#define MAX_WORKERS 10  // Maximum number of workers (adjust as needed)
+#define MAX_TASKS 10    // Maximum number of tasks (adjust as needed)
+
+// Function to calculate the total cost of an assignment
+int total_cost(int assignment[], int cost_matrix[MAX_WORKERS][MAX_TASKS], int num_workers) {
+    int total = 0;
+    for (int i = 0; i < num_workers; ++i) {
+        total += cost_matrix[i][assignment[i]];
+    }
+    return total;
+}
+
+// Function to print the optimal assignment and its total cost
+void print_optimal_assignment(int assignment[], int cost_matrix[MAX_WORKERS][MAX_TASKS], int num_workers) {
+    printf("Optimal Assignment:\n");
+    for (int i = 0; i < num_workers; ++i) {
+        printf("(worker %d, task %d)\n", i + 1, assignment[i] + 1);
+    }
+    int total_cost_value = total_cost(assignment, cost_matrix, num_workers);
+    printf("Total Cost: %d\n", total_cost_value);
+}
+
+// Function to perform exhaustive search for optimal assignment
+void assignment_problem(int cost_matrix[MAX_WORKERS][MAX_TASKS], int num_workers, int num_tasks) {
+    int assignment[MAX_WORKERS];
+    int min_cost = INT_MAX;
+    int optimal_assignment[MAX_WORKERS];
+
+    // Generate all permutations of worker indices
+    int indices[MAX_WORKERS];
+    for (int i = 0; i < num_workers; ++i) {
+        indices[i] = i;
+    }
+
+    do {
+        // Calculate cost for the current permutation
+        int current_cost = total_cost(indices, cost_matrix, num_workers);
+
+        // Update optimal assignment if current cost is lower
+        if (current_cost < min_cost) {
+            min_cost = current_cost;
+            for (int i = 0; i < num_workers; ++i) {
+                optimal_assignment[i] = indices[i];
+            }
+        }
+
+    } while (next_permutation(indices, indices + num_workers));
+
+    // Print the optimal assignment
+    print_optimal_assignment(optimal_assignment, cost_matrix, num_workers);
+}
+
+// Function to generate next permutation
+int next_permutation(int *first, int *last) {
+    if (first == last) return 0;
+
+    int *i = first;
+    ++i;
+    if (i == last) return 0;
+
+    i = last;
+    --i;
+
+    while (1) {
+        int *ii = i;
+        --i;
+
+        if (*i < *ii) {
+            int *j = last;
+            while (!(*i < *--j));
+
+            int temp = *i;
+            *i = *j;
+            *j = temp;
+
+            for (++i, j = last; i < j; ++i, --j) {
+                temp = *i;
+                *i = *j;
+                *j = temp;
+            }
+            return 1;
+        }
+        if (i == first) {
+            for (i = first, ii = last; i < ii; ++i, --ii) {
+                int temp = *i;
+                *i = *ii;
+                *ii = temp;
+            }
+            return 0;
+        }
+    }
+}
+
+int main() {
+    // Test Case 1
+    int cost_matrix1[MAX_WORKERS][MAX_TASKS] = {
+        {3, 10, 7},
+        {8, 5, 12},
+        {4, 6, 9}
+    };
+    int num_workers1 = 3;
+    int num_tasks1 = 3;
+
+    printf("Test Case 1:\n");
+    assignment_problem(cost_matrix1, num_workers1, num_tasks1);
+    printf("\n");
+
+    // Test Case 2
+    int cost_matrix2[MAX_WORKERS][MAX_TASKS] = {
+        {15, 9, 4},
+        {8, 7, 18},
+        {6, 12, 11}
+    };
+    int num_workers2 = 3;
+    int num_tasks2 = 3;
+
+    printf("Test Case 2:\n");
+    assignment_problem(cost_matrix2, num_workers2, num_tasks2);
+    printf("\n");
+
+    return 0;
+}
