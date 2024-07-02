@@ -1,0 +1,103 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure to represent a point in 2D
+typedef struct {
+    int x;
+    int y;
+} Point;
+
+// Function to calculate the cross product of vectors OA and OB
+// Cross product is positive if OAB makes a counter-clockwise turn
+// Cross product is negative if OAB makes a clockwise turn
+// Cross product is zero if points are collinear
+int crossProduct(Point O, Point A, Point B) {
+    return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
+}
+
+// Function to find the convex hull using the brute force approach
+void convexHull(Point points[], int n, Point hull[], int *hullSize) {
+    // If there are less than 3 points, convex hull is not possible
+    if (n < 3) {
+        printf("Convex hull is not possible with less than 3 points.\n");
+        *hullSize = 0;
+        return;
+    }
+    
+    // Initialize an array to store the convex hull points
+    int index = 0;
+    for (int i = 0; i < n; ++i) {
+        for (int j = i + 1; j < n; ++j) {
+            int sign = 1; // Assume initial sign is positive (counter-clockwise)
+            for (int k = 0; k < n; ++k) {
+                if (k == i || k == j) continue;
+                int cross = crossProduct(points[i], points[j], points[k]);
+                if (cross < 0) {
+                    sign = -1; // Clockwise turn found
+                    break;
+                }
+                if (cross == 0) {
+                    // Points are collinear, choose the one farthest from points[i]
+                    int dist1 = (points[j].x - points[i].x) * (points[j].x - points[i].x) + 
+                                (points[j].y - points[i].y) * (points[j].y - points[i].y);
+                    int dist2 = (points[k].x - points[i].x) * (points[k].x - points[i].x) + 
+                                (points[k].y - points[i].y) * (points[k].y - points[i].y);
+                    if (dist2 > dist1) {
+                        sign = -1; // Choose the farthest point in case of collinearity
+                    }
+                }
+            }
+            if (sign == 1) {
+                hull[index++] = points[i];
+                hull[index++] = points[j];
+            }
+        }
+    }
+    
+    // Remove duplicate points in the hull
+    *hullSize = 0;
+    for (int i = 0; i < index; ++i) {
+        int duplicate = 0;
+        for (int j = i + 1; j < index; ++j) {
+            if (hull[i].x == hull[j].x && hull[i].y == hull[j].y) {
+                duplicate = 1;
+                break;
+            }
+        }
+        if (!duplicate) {
+            hull[(*hullSize)++] = hull[i];
+        }
+    }
+}
+
+// Function to print points
+void printPoints(Point points[], int n) {
+    for (int i = 0; i < n; ++i) {
+        printf("(%d, %d) ", points[i].x, points[i].y);
+    }
+    printf("\n");
+}
+
+// Function to print convex hull points
+void printConvexHull(Point hull[], int hullSize) {
+    printf("Convex Hull: ");
+    for (int i = 0; i < hullSize; ++i) {
+        printf("(%d, %d) ", hull[i].x, hull[i].y);
+    }
+    printf("\n");
+}
+
+int main() {
+    // Example set of points
+    Point points[] = {{1, 1}, {4, 6}, {8, 1}, {0, 0}, {3, 3}};
+    int n = sizeof(points) / sizeof(points[0]);
+    
+    Point hull[n]; // Array to store convex hull points
+    int hullSize;  // Size of the convex hull
+    
+    convexHull(points, n, hull, &hullSize);
+    
+    printConvexHull(hull, hullSize);
+    
+    return 0;
+}
